@@ -1,0 +1,35 @@
+{
+  "name": "brew-web",
+  "version": "1.0.0",
+  "description": "Web appp for managing brewing process",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "webpack -d --watch "
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/piotrjaromin/brew-web.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/piotrjaromin/brew-web/issues"
+  },
+  "homepage": "https://github.com/piotrjaromin/brew-web#readme",
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "react": "^15.4.2",
+    "react-bootstrap": "^0.30.7",
+    "react-dom": "^15.4.2"
+  },
+  "devDependencies": {
+    "style-loader": "^0.13.1",
+    "url-loader": "^0.5.7",
+    "webpack": "^2.2.1",
+    "css-loader": "^0.26.1",
+    "babel-core": "^6.22.1",
+    "babel-loader": "^6.2.10",
+    "babel-preset-es2015": "^6.22.0",
+    "file-loader": "^0.10.0"
+  }
+}
