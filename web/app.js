@@ -11,7 +11,6 @@ const ReactDOM = require('react-dom');
 require('bootstrap/dist/css/bootstrap.css');
 
 //Content
-const Config = require('./config');
 const Info = require('./info');
 
 class App extends React.Component {
@@ -22,12 +21,11 @@ class App extends React.Component {
 
     render() {
         return <div className="container">
-            <PageHeader>
+            <h1 className="text-center">
                 Home brew
-            </PageHeader>
+            </h1>
             <Tabs defaultActiveKey={1} animation={false} id="noanim-tab-example">
                 <Tab eventKey={1} title="Info"><Info/></Tab>
-                <Tab eventKey={2} title="Config"><Config/></Tab>
             </Tabs>
         </div>
     }
