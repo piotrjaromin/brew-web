@@ -35,10 +35,13 @@ type keg struct {
 }
 
 func (k keg) HeaterState(h Heater) HeaterState {
-        return k.heaters[h].Read() == 0
+        state := k.heaters[h].Read()
+        log.Printf("State for heater %+v is %+v", h, state)
+        return state == 0
 }
 
 func (k keg) ToggleHeater(h Heater) {
+        log.Printf("toggil heater: %+v",h)
         k.heaters[h].Toggle()
 }
 
@@ -57,7 +60,7 @@ func NewKeg() (KegControl, error) {
 
         heaters := []rpio.Pin{rpio.Pin(HEATER1_PIN), rpio.Pin(HEATER2_PIN)}
         //temp := rpio.Pin(TEMPERATURE_PIN)
-        temp := rpio.Pin(HEATER1_PIN)
+        temp := rpio.Pin(7)
 
         heaters[0].Output()
         heaters[1].Output()
