@@ -32,7 +32,7 @@ func main() {
 
 func getKegControl() (keg.KegControl, error) {
 
-        if len(os.Args) > 0 && os.Args[1] == "mock" {
+        if len(os.Args) > 1 && os.Args[1] == "mock" {
                 log.Println("Starting mock version")
                 return keg.NewKegMock()
         }
