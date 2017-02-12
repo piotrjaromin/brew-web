@@ -29,9 +29,9 @@ func CreateHandlerForHeater(heater keg.Heater, kegControl keg.KegControl) http.H
 	return func(rw http.ResponseWriter, req *http.Request) {
 
 		switch req.Method {
-		case "GET":
+		case http.MethodGet:
 			writeState(rw)
-		case "POST":
+		case http.MethodPost:
 			kegControl.ToggleHeater(heater)
 			writeState(rw)
 		}
