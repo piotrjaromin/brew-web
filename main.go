@@ -6,6 +6,7 @@ import (
         "github.com/piotrjaromin/brew-web/brew/keg"
         "github.com/piotrjaromin/brew-web/brew/web"
         "os"
+        "github.com/piotrjaromin/brew-web/brew/pi"
 )
 
 func main() {
@@ -14,10 +15,9 @@ func main() {
         tempCache := keg.NewTemperatureCache(kegControl, 20, 100)
 
         if err != nil {
-                log.Fatal("Error while creating keg. Details: ", err)
-                return
+                log.Panic("Error while creating keg. Details: ", err)
         }
-
+        
         mux := http.NewServeMux()
 
         mux.Handle("/", http.FileServer(http.Dir("public")))
@@ -37,6 +37,20 @@ func getKegControl() (keg.KegControl, error) {
                 return keg.NewKegMock()
         }
 
-        log.Println("Startin rpio version")
-        return keg.NewKeg()
+        //PI initialization
+        if err := pi.Init(); err !=nil {
+                log.Panic("Could not initialize pi one wire module. Details: ", err)
+        }
+
+        devices, devErr := pi.GetDevices()
+        if devErr != nil {
+                log.Panic("Could not get list of devices. Details: ", devErr)
+        }
+
+        if len(devices) != 1 {
+                log.Panic("Found wrong amount of 1-wire devices. Got: ", len(devices))
+        }
+
+        log.Println("Starting rpio version")
+        return keg.NewKeg(devices[0])
 }

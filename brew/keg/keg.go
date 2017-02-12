@@ -3,6 +3,7 @@ package keg
 import (
         "github.com/stianeikeland/go-rpio"
         "log"
+        "github.com/piotrjaromin/brew-web/brew/pi"
 )
 
 type Heater int
@@ -26,12 +27,12 @@ const (
 type KegControl interface {
         ToggleHeater(h Heater)
         HeaterState(h Heater) HeaterState
-        Temperature() float32
+        Temperature() (float32, error)
 }
 
 type keg struct {
         heaters []rpio.Pin
-        temp    rpio.Pin
+        temp    pi.W1Device
 }
 
 func (k keg) HeaterState(h Heater) HeaterState {
@@ -41,16 +42,16 @@ func (k keg) HeaterState(h Heater) HeaterState {
 }
 
 func (k keg) ToggleHeater(h Heater) {
-        log.Printf("toggil heater: %+v",h)
+        log.Printf("toggle heater: %+v",h)
         k.heaters[h].Toggle()
 }
 
-func (k keg) Temperature() float32 {
-        //return float32(k.temp.Read())
-        return 5
+func (k keg) Temperature() (float32, error) {
+        t, err := k.temp.Value(1, "t")
+        return  float32(t)/ 1000, err
 }
 
-func NewKeg() (KegControl, error) {
+func NewKeg(tempDev pi.W1Device) (KegControl, error) {
 
         err := rpio.Open()
         if err != nil {
@@ -59,12 +60,10 @@ func NewKeg() (KegControl, error) {
         }
 
         heaters := []rpio.Pin{rpio.Pin(HEATER1_PIN), rpio.Pin(HEATER2_PIN)}
-        //temp := rpio.Pin(TEMPERATURE_PIN)
-        temp := rpio.Pin(7)
+        temp := tempDev
 
         heaters[0].Output()
         heaters[1].Output()
-        //temp.Input()
 
         k := keg{
                 heaters: heaters,

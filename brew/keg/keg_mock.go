@@ -22,9 +22,9 @@ func (k*KegMock) ToggleHeater(h Heater) {
 	log.Println("[mock]toggle heater", h, " state is ", k.state)
 }
 
-func (k KegMock) Temperature() float32 {
+func (k KegMock) Temperature() (float32, error) {
 	log.Println("[mock]Temperature")
-	return rand.Float32() * 100
+	return rand.Float32() * 100, nil
 }
 
 func NewKegMock() (KegControl, error) {
