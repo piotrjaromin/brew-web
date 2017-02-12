@@ -38,9 +38,9 @@ func getKegControl() (keg.KegControl, error) {
         }
 
         //PI initialization
-        if err := pi.Init(); err !=nil {
-                log.Panic("Could not initialize pi one wire module. Details: ", err)
-        }
+        //if err := pi.Init(); err !=nil {
+        //        log.Panic("Could not initialize pi one wire module. Details: ", err)
+        //}
 
         devices, devErr := pi.GetDevices()
         if devErr != nil {
