@@ -28,7 +28,6 @@ func (w1 w1Struct) Name() string {
 }
 
 func (w1 w1Struct) W1Slave() (string, error) {
-
         data, err := ioutil.ReadFile(w1.path + "/" + W1_SLAVE)
         if err != nil {
                 return "", fmt.Errorf("[W1] Could not read W1Slave data file. Details %+v.", err)
@@ -63,11 +62,11 @@ func (w1 w1Struct) Value(lineNo int, key string) (int, error) {
 func Init() error {
 
         //this one probably require being called with sudo
-        if err := callOs("modprobe w1-gpio'"); err != nil {
+        if err := callOs("sudo modprobe w1-gpio'"); err != nil {
                 return err
         }
 
-        if err := callOs("modprobe w1-therm"); err != nil {
+        if err := callOs("sudo modprobe w1-therm"); err != nil {
                 return err
         }
 
@@ -84,7 +83,7 @@ func GetDevices() ([]W1Device, error) {
 
         for _, w1dir := range dirs {
 
-                if (strings.HasPrefix(W28_PREFIX, w1dir.Name())) {
+                if (strings.HasPrefix(w1dir.Name(), W28_PREFIX)) {
                         devices = append(devices, w1Struct{
                                 name: w1dir.Name(),
                                 path: W1_DEVICES_PATH + "/" + w1dir.Name(),

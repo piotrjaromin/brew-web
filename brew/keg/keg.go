@@ -10,7 +10,6 @@ type Heater int
 
 const HEATER1_PIN = 14
 const HEATER2_PIN = 15
-const TEMPERATURE_PIN = 10
 
 const (
         FIRST Heater = iota
@@ -38,7 +37,7 @@ type keg struct {
 func (k keg) HeaterState(h Heater) HeaterState {
         state := k.heaters[h].Read()
         log.Printf("State for heater %+v is %+v", h, state)
-        return state == 0
+        return state != 0
 }
 
 func (k keg) ToggleHeater(h Heater) {
