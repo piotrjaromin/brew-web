@@ -1,12 +1,12 @@
 package web
 
 import (
-	"github.com/piotrjaromin/brew-web/brew/keg"
-	"net/http"
 	"encoding/json"
 	"log"
-)
+	"net/http"
 
+	"github.com/piotrjaromin/brew-web/brew/keg"
+)
 
 func CreateHandlerForHeater(heater keg.Heater, kegControl keg.KegControl) http.HandlerFunc {
 
@@ -19,19 +19,19 @@ func CreateHandlerForHeater(heater keg.Heater, kegControl keg.KegControl) http.H
 		})
 
 		if err != nil {
-			rw.WriteHeader(http.StatusInternalServerError)
-			rw.Write([]byte("error: " + err.Error()))
-		} else {
-			rw.Write(state)
+			HandlerError(rw, err)
+			return
 		}
+
+		rw.Write(state)
 	}
 
 	return func(rw http.ResponseWriter, req *http.Request) {
 
 		switch req.Method {
-		case "GET":
+		case http.MethodGet:
 			writeState(rw)
-		case "POST":
+		case http.MethodPost:
 			kegControl.ToggleHeater(heater)
 			writeState(rw)
 		}
@@ -42,16 +42,80 @@ func CreateHandlerForHeater(heater keg.Heater, kegControl keg.KegControl) http.H
 func CreateTempHandler(t keg.Temperatures) http.HandlerFunc {
 
 	return func(rw http.ResponseWriter, req *http.Request) {
-
 		tempsJson, err := json.Marshal(t.Get())
 
 		if err != nil {
-			log.Fatal("error while writing temps array. ", err)
-			rw.Write([]byte("error: " + err.Error()))
-			rw.WriteHeader(http.StatusInternalServerError)
-		} else {
-			rw.Write(tempsJson)
+			HandlerError(rw, err)
+			return
 		}
 
+		rw.Write(tempsJson)
 	}
+
+}
+
+func CreateTempControlHandler(tempControl keg.TempControl) http.HandlerFunc {
+
+	return func(rw http.ResponseWriter, req *http.Request) {
+
+		switch req.Method {
+		case http.MethodGet:
+			tempJSON, err := json.Marshal(Temp{tempControl.GetTemp()})
+
+			if err != nil {
+				HandlerError(rw, err)
+				return
+			}
+
+			rw.Write(tempJson)
+
+		case http.MethodPost:
+			decoder := json.NewDecoder(req.Body)
+			temp := Temp{}
+			if err := decoder.Decode(&temp); err != nil {
+				HandlerError(rw, err)
+				return
+			}
+			tempControl.KeepTemp(temp.Value)
+
+		case http.MethodDelete:
+			tempControl.Stop()
+		}
+	}
+}
+
+func CreateRecepiesHandler(cook keg.Cook) http.HandlerFunc {
+
+	var recipe keg.RecipeStruct
+	return func(rw http.ResponseWriter, req *http.Request) {
+
+		switch req.Method {
+		case http.MethodGet:
+			recipeJSON := json.Marshal(recipe)
+			if err != nil {
+				HandlerError(rw, err)
+				return
+			}
+
+			rw.Write(recipe)
+
+		case http.MethodPost:
+			decoder := json.NewDecoder(req.Body)
+
+			if err := decoder.Decode(&recipe); err != nil {
+				HandlerError(rw, err)
+				return
+			}
+			cook.Execute(recipe)
+
+		case http.MethodDelete:
+			cook.Stop()
+		}
+	}
+}
+
+func HandlerError(rw http.ResponseWriter, err error) {
+	log.Fatal("error while readin temp control. ", err)
+	rw.Write([]byte("error: " + err.Error()))
+	rw.WriteHeader(http.StatusInternalServerError)
 }

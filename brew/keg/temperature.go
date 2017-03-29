@@ -1,8 +1,8 @@
 package keg
 
 import (
-	"time"
 	"log"
+	"time"
 )
 
 type Temperatures interface {
@@ -15,7 +15,7 @@ type TemperatureCache struct {
 }
 
 type TemperaturePoint struct {
-	Value     float32 `json:"value"`
+	Value     float64   `json:"value"`
 	TimeStamp time.Time `json:"timestamp"`
 }
 
@@ -24,10 +24,10 @@ func (t TemperatureCache) Get() []TemperaturePoint {
 	return t.cache
 }
 
-func (t *TemperatureCache) add(s float32) {
+func (t *TemperatureCache) add(s float64) {
 	t.cache = append(t.cache, TemperaturePoint{s, time.Now()})
 	if len(t.cache) > t.maxCacheSize {
-		t.cache = t.cache[1: len(t.cache)]
+		t.cache = t.cache[1:len(t.cache)]
 	}
 }
 
@@ -45,7 +45,7 @@ func NewTemperatureCache(keg KegControl, intervalSec time.Duration, cacheSize in
 
 			temp, err := keg.Temperature()
 			if err != nil {
-				log.Fatal("[T-Cache]Could not read temeprature")
+				log.Fatal("[T-Cache]Could not read temperature", err)
 			}
 			t.add(temp)
 		}

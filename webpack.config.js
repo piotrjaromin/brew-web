@@ -35,7 +35,7 @@ const config = {
             comments: false,
             sourceMap: true,
             mangle: true,
-            minimize: true
+            minimize: false
         }),
         new webpack.DefinePlugin({
             'process.env': {

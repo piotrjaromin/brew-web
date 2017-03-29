@@ -16,11 +16,18 @@ class HeaterControl extends React.Component {
         this.toggleHeater = this.toggleHeater.bind(this);
         this.heaterControl = this.heaterControl.bind(this);
         this.heaterState = this.heaterState.bind(this);
+        this.updateHeatersState = this.updateHeatersState.bind(this)
+
+        setInterval(this.updateHeatersState, 3000)
+    }
+
+    updateHeatersState() {
+        this.heaterState(1);
+        this.heaterState(2);
     }
 
     componentDidMount() {
-        this.heaterState(1);
-        this.heaterState(2);
+        this.updateHeatersState()
     }
 
 

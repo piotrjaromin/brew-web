@@ -7,6 +7,7 @@ import (
 
 type KegMock struct {
 	state HeaterState
+	temp  float64
 }
 
 func (k KegMock) HeaterState(h Heater) HeaterState {
@@ -15,19 +16,26 @@ func (k KegMock) HeaterState(h Heater) HeaterState {
 	return k.state
 }
 
-func (k*KegMock) ToggleHeater(h Heater) {
+func (k *KegMock) ToggleHeater(h Heater) {
 
-	k.state = !k.state
-
-	log.Println("[mock]toggle heater", h, " state is ", k.state)
+	if h == FIRST {
+		k.state = !k.state
+		log.Println("[mock]toggle heater", h, " state is ", k.state)
+	}
 }
 
-func (k KegMock) Temperature() (float32, error) {
+func (k *KegMock) Temperature() (float64, error) {
 	log.Println("[mock]Temperature")
-	return rand.Float32() * 100, nil
+
+	if k.state == ON {
+		k.temp++
+	} else {
+		k.temp--
+	}
+	return k.temp, nil
 }
 
 func NewKegMock() (KegControl, error) {
 
-	return KegControl(&KegMock{}), nil
+	return &KegMock{HeaterState(false), rand.Float64() * 100}, nil
 }

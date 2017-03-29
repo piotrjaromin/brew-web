@@ -18,6 +18,7 @@ const XAxis = require('recharts/lib').XAxis;
 const Tooltip = require('recharts/lib').Tooltip;
 
 const HeaterControl = require('./heaterControl');
+const TempControl = require('./tempControl');
 
 class Info extends React.Component {
 
@@ -25,6 +26,8 @@ class Info extends React.Component {
         super(params);
         this.refresh = this.refresh.bind(this);
         this.state = {data: []};
+
+        setInterval(this.refresh, 10000);
     }
 
     refresh() {
@@ -52,6 +55,9 @@ class Info extends React.Component {
                     </Row>
                     <Row>
                         <HeaterControl/>
+                    </Row>
+                    <Row>
+                        <TempControl/>
                     </Row>
                 </Col>
                 <Col md={9} xs={12}>
