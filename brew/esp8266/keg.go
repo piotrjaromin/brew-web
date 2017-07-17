@@ -21,7 +21,7 @@ func (k kegStruct) HeaterState(h keg.Heater) keg.HeaterState {
 	stateStr, err := readResp(k.host + k.heatersPath[h])
 	state, err := strconv.Atoi(stateStr)
 	if err != nil {
-		log.Panic("Could not read heater state", err.Error())
+		log.Printf("Could not read heater state %s, state string is %s", err.Error(), stateStr)
 	}
 
 	return state != 0

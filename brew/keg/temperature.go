@@ -45,7 +45,8 @@ func NewTemperatureCache(keg KegControl, intervalSec time.Duration, cacheSize in
 
 			temp, err := keg.Temperature()
 			if err != nil {
-				log.Fatal("[T-Cache]Could not read temperature", err)
+				log.Print("[T-Cache]Could not read temperature", err)
+				return
 			}
 			t.add(temp)
 		}

@@ -15,7 +15,6 @@ type Recipe interface {
 type Cook interface {
 	Execute(rs Recipe)
 	Stop()
-	Recipe() Recipe
 }
 
 type CookStruct struct {

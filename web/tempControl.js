@@ -20,13 +20,13 @@ class TempControl extends React.Component {
     }
 
     handleTempChange(e) {
-        console.log(e)
-        console.log("setting temp to " + e.target.value)
-        this.setState({temp : Number(e.target.value)})
+        console.log(e);
+        console.log("setting temp to " + e.target.value);
+        this.setState({temp : Number(e.target.value)});
     }
 
     handleSetTemp(e) {
-        const self = this
+        const self = this;
         axios
         .post(`/temperatures/control`, { value: this.state.temp})
         .then( resp => {
@@ -37,7 +37,7 @@ class TempControl extends React.Component {
             }   
         } )
         .catch(e => {
-            console.log(`Error while setting temperature to control. ${e}` )
+            console.log(`Error while setting temperature to control. ${e}` );
         })
     
     }
@@ -47,13 +47,13 @@ class TempControl extends React.Component {
         .delete(`/temperatures/control`)
         .then( resp => {
              if (resp.status === 200) {
-                console.log("temp was deleted successfully")
+                console.log("temp was deleted successfully");
             } else {
-                console.log(`Wrong status code for delete temp response ${resp.statusCode}`)
+                console.log(`Wrong status code for delete temp response ${resp.statusCode}`);
             }   
         } )
         .catch(e => {
-            console.log(`Error while deleting temperature to control. ${e}` )
+            console.log(`Error while deleting temperature to control. ${e}` );
         })
     } 
 
@@ -72,4 +72,4 @@ class TempControl extends React.Component {
     }
 }
 
-module.exports = TempControl
+module.exports = TempControl;

@@ -67,7 +67,7 @@ func CreateTempControlHandler(tempControl keg.TempControl) http.HandlerFunc {
 				return
 			}
 
-			rw.Write(tempJson)
+			rw.Write(tempJSON)
 
 		case http.MethodPost:
 			decoder := json.NewDecoder(req.Body)
@@ -84,20 +84,20 @@ func CreateTempControlHandler(tempControl keg.TempControl) http.HandlerFunc {
 	}
 }
 
-func CreateRecepiesHandler(cook keg.Cook) http.HandlerFunc {
+func CreateRecipesHandler(cook keg.Cook) http.HandlerFunc {
 
 	var recipe keg.RecipeStruct
 	return func(rw http.ResponseWriter, req *http.Request) {
 
 		switch req.Method {
 		case http.MethodGet:
-			recipeJSON := json.Marshal(recipe)
+			recipeJSON, err := json.Marshal(recipe)
 			if err != nil {
 				HandlerError(rw, err)
 				return
 			}
 
-			rw.Write(recipe)
+			rw.Write(recipeJSON)
 
 		case http.MethodPost:
 			decoder := json.NewDecoder(req.Body)
@@ -115,7 +115,7 @@ func CreateRecepiesHandler(cook keg.Cook) http.HandlerFunc {
 }
 
 func HandlerError(rw http.ResponseWriter, err error) {
-	log.Fatal("error while readin temp control. ", err)
+	log.Fatal("Error while handling request. ", err)
 	rw.Write([]byte("error: " + err.Error()))
 	rw.WriteHeader(http.StatusInternalServerError)
 }
