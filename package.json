@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Web appp for managing brewing process",
   "scripts": {
-    "build" : "webpack --progress",
+    "build": "webpack --progress",
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "webpack -d --watch "
   },
