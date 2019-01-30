@@ -35,7 +35,7 @@ func NewKeg(tempDev W1Device) (keg.KegControl, error) {
 
 	err := rpio.Open()
 	if err != nil {
-		log.Println("could not open rpio. Details %+v", err)
+		log.Printf("could not open rpio. Details %+v\n", err)
 		return nil, err
 	}
 

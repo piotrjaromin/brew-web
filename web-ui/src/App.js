@@ -2,6 +2,7 @@ import React from 'react';
 import { Tabs, Tab } from 'react-bootstrap';
 
 import 'bootstrap/dist/css/bootstrap.css';
+import './App.css';
 
 //Content
 import Info from './info';

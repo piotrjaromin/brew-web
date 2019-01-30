@@ -4,10 +4,14 @@ import { Row, Col, Button } from 'react-bootstrap';
 import { LineChart, Line, CartesianGrid, YAxis, XAxis, Tooltip } from 'recharts';
 
 import axios from 'axios';
-import { moment } from 'moment';
+import moment from 'moment';
 
 import HeaterControl from './heaterControl';
 import TempControl from './tempControl';
+
+import config from './config';
+const { backendUrl } = config;
+
 
 class Info extends React.Component {
 
@@ -21,7 +25,7 @@ class Info extends React.Component {
 
     refresh() {
 
-        axios.get('temperatures').then(resp => {
+        axios.get(`${backendUrl}/temperatures`).then(resp => {
             if (resp.status === 200) {
                 this.setState({
                     data: resp.data.map(point => {
@@ -45,6 +49,7 @@ class Info extends React.Component {
                     <Row>
                         <HeaterControl/>
                     </Row>
+                    <hr/>
                     <Row>
                         <TempControl/>
                     </Row>

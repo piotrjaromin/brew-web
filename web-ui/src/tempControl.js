@@ -3,6 +3,9 @@ import axios from 'axios';
 
 import { Button, FormGroup, FormLabel, FormControl } from 'react-bootstrap';
 
+import config from './config';
+const { backendUrl } = config;
+
 class TempControl extends React.Component {
 
     constructor(params) {
@@ -14,7 +17,6 @@ class TempControl extends React.Component {
     }
 
     handleTempChange(e) {
-        console.log(e);
         console.log("setting temp to " + e.target.value);
         this.setState({temp : Number(e.target.value)});
     }
@@ -22,30 +24,29 @@ class TempControl extends React.Component {
     handleSetTemp(e) {
         const self = this;
         axios
-        .post(`/temperatures/control`, { value: this.state.temp})
-        .then( resp => {
-             if (resp.status === 200) {
-                console.log("temp was set successfully: " + self.state.temp)
-            } else {
-                console.log(`Wrong status code response for set temp ${resp.statusCode}`)
-            }
-        } )
-        .catch(e => {
-            console.log(`Error while setting temperature to control. ${e}` );
-        })
+            .post(`${backendUrl}/temperatures/control`, { value: this.state.temp})
+            .then( resp => {
+                if (resp.status === 200) {
+                    return console.log("temp was set successfully: " + self.state.temp)
+                }
 
+                return console.log(`Wrong status code response for set temp ${resp.statusCode}`)
+            })
+            .catch(e => {
+                console.log(`Error while setting temperature to control. ${e}` );
+            })
     }
 
     handleDisableTemp(e) {
         axios
-        .delete(`/temperatures/control`)
+        .delete(`${backendUrl}//temperatures/control`)
         .then( resp => {
-             if (resp.status === 200) {
-                console.log("temp was deleted successfully");
-            } else {
-                console.log(`Wrong status code for delete temp response ${resp.statusCode}`);
+            if (resp.status === 200) {
+                return console.log("temp was deleted successfully");
             }
-        } )
+
+            return console.log(`Wrong status code for delete temp response ${resp.statusCode}`);
+        })
         .catch(e => {
             console.log(`Error while deleting temperature to control. ${e}` );
         })

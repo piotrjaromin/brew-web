@@ -1,8 +1,11 @@
 import React from 'react';
 import axios from 'axios';
 
-import { Row, Col, ToggleButton } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
+import ToggleButton from 'react-toggle-button';
 
+import config from './config';
+const { backendUrl } = config;
 
 class HeaterControl extends React.Component {
 
@@ -29,7 +32,7 @@ class HeaterControl extends React.Component {
 
     heaterState(heaterNo) {
         const self = this;
-        axios.get(`/heaters/${heaterNo}`)
+        axios.get(`${backendUrl}/heaters/${heaterNo}`)
             .then(resp => {
                 if (resp.status === 200) {
                     self.state.heaters[heaterNo] = resp.data.state;
@@ -40,7 +43,7 @@ class HeaterControl extends React.Component {
 
     toggleHeater(heaterNo) {
         const self = this;
-        axios.post(`/heaters/${heaterNo}`)
+        axios.post(`${backendUrl}/heaters/${heaterNo}`)
             .then(resp => {
                 if (resp.status === 200) {
                     self.state.heaters[heaterNo] = resp.data.state;
@@ -54,10 +57,10 @@ class HeaterControl extends React.Component {
     heaterControl(heaterNo) {
         const self = this;
         return <Row>
-            <Col md={12}>
-                Heater {heaterNo}:
+            <Col md={5}>
+                Heater{heaterNo}:
             </Col>
-            <Col md={12}>
+            <Col md={7}>
                 <ToggleButton
                     value={ self.state.heaters[heaterNo] || false }
                     onToggle={() => self.toggleHeater(heaterNo)}/>
