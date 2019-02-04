@@ -1,28 +1,47 @@
 import React from 'react';
-import axios from 'axios';
 
 import { Row, Col } from 'react-bootstrap';
 import ToggleButton from 'react-toggle-button';
+import createKegClient from './services/kegClient';
 
-import config from './config';
-const { backendUrl } = config;
+const kegClient = createKegClient();
+
+const HEATER_1 = '1';
+const HEATER_2 = '2';
 
 class HeaterControl extends React.Component {
 
     constructor(params) {
         super(params);
-        this.state = {heaters: {}};
+        this.state = {
+            heaters: {
+                [HEATER_1]: false,
+                [HEATER_2]: false,
+            }
+        };
+
         this.toggleHeater = this.toggleHeater.bind(this);
         this.heaterControl = this.heaterControl.bind(this);
         this.heaterState = this.heaterState.bind(this);
         this.updateHeatersState = this.updateHeatersState.bind(this);
-
-        setInterval(this.updateHeatersState, 15000)
+        this.toggleHeater = this.toggleHeater.bind(this);
     }
 
     updateHeatersState() {
-        this.heaterState(1);
-        this.heaterState(2);
+        Promise.all([
+            this.heaterState(HEATER_1),
+            this.heaterState(HEATER_2),
+        ])
+            .then(([state1, state2]) => {
+                console.log(`setting state for \n${HEATER_1}: ${state1}\n${HEATER_2}: ${state2}`);
+                this.setState(prevState => ({
+                    heaters: {
+                        ...prevState.heaters,
+                        [HEATER_1]: state1,
+                        [HEATER_2]: state2,
+                    }
+                }));
+            })
     }
 
     componentDidMount() {
@@ -31,27 +50,12 @@ class HeaterControl extends React.Component {
 
 
     heaterState(heaterNo) {
-        const self = this;
-        axios.get(`${backendUrl}/heaters/${heaterNo}`)
-            .then(resp => {
-                if (resp.status === 200) {
-                    self.state.heaters[heaterNo] = resp.data.state;
-                    self.setState(self.state)
-                }
-            });
+        return kegClient.getHeaterState(heaterNo);
     }
 
     toggleHeater(heaterNo) {
-        const self = this;
-        axios.post(`${backendUrl}/heaters/${heaterNo}`)
-            .then(resp => {
-                if (resp.status === 200) {
-                    self.state.heaters[heaterNo] = resp.data.state;
-                    self.setState(self.state)
-                } else {
-                    console.error(`Invalid response from backend. ${resp.status}: ${resp.data}`)
-                }
-            });
+        kegClient.toggleHeater(heaterNo)
+            .then(this.updateHeatersState());
     }
 
     heaterControl(heaterNo) {
@@ -62,7 +66,7 @@ class HeaterControl extends React.Component {
             </Col>
             <Col md={7}>
                 <ToggleButton
-                    value={ self.state.heaters[heaterNo] || false }
+                    value={ self.state.heaters[heaterNo] }
                     onToggle={() => self.toggleHeater(heaterNo)}/>
             </Col>
         </Row>
@@ -73,12 +77,12 @@ class HeaterControl extends React.Component {
         return <div>
             <Row>
                 <Col md={12}>
-                    {this.heaterControl(1)}
+                    {this.heaterControl(HEATER_1)}
                 </Col>
             </Row>
             <Row>
                 <Col md={12}>
-                    {this.heaterControl(2)}
+                    {this.heaterControl(HEATER_2)}
                 </Col></Row>
         </div>
     }

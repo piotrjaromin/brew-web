@@ -3,8 +3,8 @@ package keg
 type Heater int
 
 const (
-	FIRST  Heater = iota
-	SECOND Heater = iota
+	FIRST  Heater = 1
+	SECOND Heater = 2
 )
 
 type HeaterState bool

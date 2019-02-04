@@ -44,7 +44,7 @@ class Info extends React.Component {
             <Row>
                 <Col md={2} xs={12}>
                     <Row>
-                        <Button bsStyle="info" onClick={this.refresh}>Refresh</Button>
+                        <Button variant="info" onClick={this.refresh}>Refresh</Button>
                     </Row>
                     <Row>
                         <HeaterControl/>
