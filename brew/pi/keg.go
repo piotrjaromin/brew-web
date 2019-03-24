@@ -31,6 +31,10 @@ func (k kegStruct) Temperature() (float64, error) {
 	return float64(t) / 1000, err
 }
 
+func (k kegStruct) SetHeaterState(h keg.Heater, enabled keg.HeaterState) {
+	panic("Not implemented")
+}
+
 func NewKeg(tempDev W1Device) (keg.KegControl, error) {
 
 	err := rpio.Open()

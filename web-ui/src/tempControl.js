@@ -3,8 +3,11 @@ import React from 'react';
 import { Button, FormGroup, FormLabel, FormControl, ButtonToolbar } from 'react-bootstrap';
 
 import createKegClient from './services/kegClient';
+import { createSimpleLogger } from 'simple-node-logger';
 
 const kegClient = createKegClient();
+const logger = createSimpleLogger();
+
 
 class TempControl extends React.Component {
 
@@ -17,7 +20,7 @@ class TempControl extends React.Component {
     }
 
     handleTempChange(e) {
-        console.log("setting temp to " + e.target.value);
+        logger.info("setting temp to " + e.target.value);
         this.setState({temp : Number(e.target.value)});
     }
 

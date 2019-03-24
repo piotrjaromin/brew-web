@@ -10,12 +10,10 @@ import (
 
 func CreateHandlerForHeater(heater keg.Heater, kegControl keg.KegControl) http.HandlerFunc {
 
-	writeState := func(rw http.ResponseWriter) {
+	writeState := func(rw http.ResponseWriter, state keg.HeaterState) {
 
-		state, err := json.Marshal(struct {
-			State keg.HeaterState `json:"state"`
-		}{
-			kegControl.HeaterState(heater),
+		stateMarshaled, err := json.Marshal(HeaterState{
+			State: state,
 		})
 
 		if err != nil {
@@ -23,17 +21,25 @@ func CreateHandlerForHeater(heater keg.Heater, kegControl keg.KegControl) http.H
 			return
 		}
 
-		rw.Write(state)
+		rw.Write(stateMarshaled)
 	}
 
 	return func(rw http.ResponseWriter, req *http.Request) {
-
 		switch req.Method {
 		case http.MethodGet:
-			writeState(rw)
+			writeState(rw, kegControl.HeaterState(heater))
 		case http.MethodPost:
-			kegControl.ToggleHeater(heater)
-			writeState(rw)
+			decoder := json.NewDecoder(req.Body)
+			state := HeaterState{}
+			if err := decoder.Decode(&state); err != nil {
+				println("1")
+				HandlerError(rw, err)
+				return
+			}
+
+			println("2")
+			kegControl.SetHeaterState(heater, state.State)
+			writeState(rw, state.State)
 		}
 	}
 
@@ -115,7 +121,7 @@ func CreateRecipesHandler(cook keg.Cook) http.HandlerFunc {
 }
 
 func HandlerError(rw http.ResponseWriter, err error) {
-	log.Fatal("Error while handling request. ", err)
+	log.Fatal("Error while handling request. ", err.Error())
 	rw.Write([]byte("error: " + err.Error()))
 	rw.WriteHeader(http.StatusInternalServerError)
 }

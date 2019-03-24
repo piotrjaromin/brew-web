@@ -3,8 +3,11 @@ import React from 'react';
 import { Row, Col } from 'react-bootstrap';
 import ToggleButton from 'react-toggle-button';
 import createKegClient from './services/kegClient';
+import { createSimpleLogger } from 'simple-node-logger';
 
 const kegClient = createKegClient();
+
+const logger = createSimpleLogger();
 
 const HEATER_1 = '1';
 const HEATER_2 = '2';
@@ -33,7 +36,7 @@ class HeaterControl extends React.Component {
             this.heaterState(HEATER_2),
         ])
             .then(([state1, state2]) => {
-                console.log(`setting state for \n${HEATER_1}: ${state1}\n${HEATER_2}: ${state2}`);
+                logger.info(`setting state for \n${HEATER_1}: ${state1}\n${HEATER_2}: ${state2}`);
                 this.setState(prevState => ({
                     heaters: {
                         ...prevState.heaters,
@@ -54,8 +57,17 @@ class HeaterControl extends React.Component {
     }
 
     toggleHeater(heaterNo) {
-        kegClient.toggleHeater(heaterNo)
-            .then(this.updateHeatersState());
+        const newState = !this.state.heaters[heaterNo]
+        logger.info(`clicked heat ${heaterNo}, setting value to: ${newState}`);
+        kegClient.toggleHeater(heaterNo, newState)
+            .then(() => {
+                this.setState(prevState => ({
+                    heaters: {
+                        ...prevState.heaters,
+                        [heaterNo]: newState,
+                    }
+                }));
+            });
     }
 
     heaterControl(heaterNo) {

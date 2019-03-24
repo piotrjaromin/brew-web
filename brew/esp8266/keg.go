@@ -6,9 +6,9 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"github.com/piotrjaromin/brew-web/brew/keg"
+	"gopkg.in/resty.v1"
 )
 
 type kegStruct struct {
@@ -29,13 +29,36 @@ func (k kegStruct) HeaterState(h keg.Heater) keg.HeaterState {
 
 func (k kegStruct) ToggleHeater(h keg.Heater) {
 	log.Printf("toggle heater: %+v", h)
-	resp, err := http.Post(k.host+k.heatersPath[h], "text", strings.NewReader(""))
+	url := k.host + k.heatersPath[h]
+	resp, err := resty.R().Post(url)
 	if err != nil {
 		log.Panic("Could not switch heater state", err.Error())
 	}
 
-	if resp.StatusCode != 200 {
+	if resp.StatusCode() != 200 {
 		log.Panic("Could not switch state, wrong response code")
+	}
+}
+
+func (k kegStruct) SetHeaterState(h keg.Heater, enabled keg.HeaterState) {
+	log.Printf("toggle heater: %+v", h)
+
+	handleErr := func(err error, statusCode int) {
+		if err != nil {
+			log.Panic("Could not disable heater", err.Error())
+		}
+		if statusCode != 200 {
+			log.Panic("Could not disable state, wrong response code")
+		}
+	}
+
+	url := k.host + k.heatersPath[h]
+	if enabled == keg.ON {
+		resp, err := resty.R().Put(url)
+		handleErr(err, resp.StatusCode())
+	} else {
+		resp, err := resty.R().Delete(url)
+		handleErr(err, resp.StatusCode())
 	}
 }
 

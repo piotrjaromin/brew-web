@@ -35,6 +35,19 @@ func (k *KegMock) ToggleHeater(h Heater) {
 	}
 }
 
+func (k *KegMock) SetHeaterState(h Heater, state HeaterState) {
+
+	if h == FIRST {
+		k.heater1 = state
+		log.Println("[mock] SetHeaterState heater", h, ", new state is ", state)
+	}
+
+	if h == SECOND {
+		k.heater2 = state
+		log.Println("[mock] SetHeaterState heater", h, ", new state is ", state)
+	}
+}
+
 func (k *KegMock) Temperature() (float64, error) {
 	log.Println("[mock] Temperature")
 

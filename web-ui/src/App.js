@@ -14,7 +14,7 @@ class App extends React.Component {
             <h1 className="text-center">
                 Home brew
             </h1>
-            <Tabs defaultActiveKey={1} animation={false} id="noanim-tab-example">
+            <Tabs defaultActiveKey={1} animation="false" id="noanim-tab-example">
                 <Tab eventKey={1} title="Info"><Info/></Tab>
             </Tabs>
         </div>

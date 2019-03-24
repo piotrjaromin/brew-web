@@ -9,7 +9,6 @@ type TempControl interface {
 	KeepTemp(temp float64)
 	GetTemp() float64
 	Stop()
-	Start()
 }
 
 type TempControlStruct struct {
@@ -26,7 +25,7 @@ func NewTempControl(kegControl KegControl, temp float64) TempControl {
 	tcs := TempControlStruct{
 		temp,
 		make(chan struct{}),
-		1.0,
+		2,
 		false,
 		kegControl,
 	}
@@ -37,7 +36,11 @@ func NewTempControl(kegControl KegControl, temp float64) TempControl {
 func (tcs *TempControlStruct) KeepTemp(temp float64) {
 	log.Println("new temp to keep is ", temp)
 	if !tcs.started {
-		tcs.Start()
+		ticker := time.NewTicker(5 * time.Second)
+		tcs.started = true
+		go func() {
+			go tcs.loopTemp(ticker)
+		}()
 	}
 
 	tcs.temp = temp
@@ -48,35 +51,34 @@ func (tcs TempControlStruct) Stop() {
 	tcs.started = false
 }
 
-func (tcs TempControlStruct) Start() {
-	ticker := time.NewTicker(5 * time.Second)
-	tcs.started = true
-	go func() {
-		go tcs.loopTemp(ticker)
-	}()
-}
-
 func (tcs TempControlStruct) loopTemp(ticker *time.Ticker) {
+
+	enableHeaters := func(state HeaterState) {
+		log.Println("[tempControl] toggling state of heaters")
+
+		tcs.kegControl.SetHeaterState(FIRST, state)
+		tcs.kegControl.SetHeaterState(SECOND, state)
+	}
+
 	for {
 		select {
 		case <-ticker.C:
-
 			currTemp, err := tcs.kegControl.Temperature()
 			if err != nil {
-				log.Printf("Error while reading temeprature. %s", err.Error())
+				log.Printf("Error while reading temperature. %s", err.Error())
 				break
 			}
 
-			state := tcs.kegControl.HeaterState(FIRST)
-			if currTemp+tcs.dispresion > tcs.temp && state {
-				log.Println("[tempControl] toggling state of heaters")
-				tcs.kegControl.ToggleHeater(FIRST)
-				tcs.kegControl.ToggleHeater(SECOND)
+			heaterEnabled := tcs.kegControl.HeaterState(FIRST)
+			log.Printf("Current temp is %+v, heater state is %+v\n", currTemp, heaterEnabled)
+			if currTemp+tcs.dispresion > tcs.temp && heaterEnabled {
+				log.Printf("Disabling heaters, temps: %+v > %+v\n", currTemp+tcs.dispresion, tcs.temp)
+				enableHeaters(OFF)
 			}
 
-			if currTemp-tcs.dispresion < tcs.temp && !state {
-				tcs.kegControl.ToggleHeater(FIRST)
-				tcs.kegControl.ToggleHeater(SECOND)
+			if currTemp-tcs.dispresion < tcs.temp && !heaterEnabled {
+				log.Printf("Enabling heaters, temps: %+v < %+v\n", currTemp-tcs.dispresion, tcs.temp)
+				enableHeaters(ON)
 			}
 
 		case <-tcs.quit:

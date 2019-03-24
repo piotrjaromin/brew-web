@@ -8,14 +8,15 @@ const logger = createSimpleLogger();
 
 export default function create() {
 
-    function toggleHeater(heaterNo) {
-        return axios.post(`${backendUrl}/heaters/${heaterNo}`)
+    function toggleHeater(heaterNo, state) {
+        logger.info(`setting heater state ${heaterNo} to ${state}`);
+        return axios.post(`${backendUrl}/heaters/${heaterNo}`, { 'state': state })
             .then(resp => {
-                if (resp.status === 200) {
-                    return resp.data.state;
+                if (resp.status !== 200) {
+                    return logger.error(`Invalid response from backend. ${resp.status}: ${resp.data}`);
                 }
 
-                logger.error(`Invalid response from backend. ${resp.status}: ${resp.data}`);
+                return resp.data.state;
             })
             .catch(logger.error);
     }
@@ -34,11 +35,11 @@ export default function create() {
         axios
             .post(`${backendUrl}/temperatures/control`, { value: temp})
             .then( resp => {
-                if (resp.status === 200) {
-                    logger.info("temp was set successfully: " + temp)
+                if (resp.status !== 200) {
+                    return logger.error(`Wrong status code response for set temp ${resp.statusCode}`)
                 }
 
-                return logger.error(`Wrong status code response for set temp ${resp.statusCode}`)
+                return logger.info("temp was set successfully: " + temp)
             })
             .catch(e => {
                 logger.error(`Error while setting temperature to control. ${e}`);
@@ -49,11 +50,11 @@ export default function create() {
         axios
             .delete(`${backendUrl}/temperatures/control`)
             .then( resp => {
-                if (resp.status === 200) {
-                    return logger.error('temp was deleted successfully');
+                if (resp.status !== 200) {
+                    return logger.error(`Wrong status code for delete temp response ${resp.statusCode}`);
                 }
 
-                return logger.error(`Wrong status code for delete temp response ${resp.statusCode}`);
+                return logger.info('temp was deleted successfully');
             })
             .catch(e => {
                 logger.error(`Error while deleting temperature to control. ${e}` );

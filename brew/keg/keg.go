@@ -3,8 +3,8 @@ package keg
 type Heater int
 
 const (
-	FIRST  Heater = 1
-	SECOND Heater = 2
+	FIRST  Heater = 0
+	SECOND Heater = 1
 )
 
 type HeaterState bool
@@ -16,6 +16,7 @@ const (
 
 type KegControl interface {
 	ToggleHeater(h Heater)
+	SetHeaterState(h Heater, enabled HeaterState)
 	HeaterState(h Heater) HeaterState
 	Temperature() (float64, error)
 }
