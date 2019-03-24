@@ -54,8 +54,6 @@ func (tcs TempControlStruct) Stop() {
 func (tcs TempControlStruct) loopTemp(ticker *time.Ticker) {
 
 	enableHeaters := func(state HeaterState) {
-		log.Println("[tempControl] toggling state of heaters")
-
 		tcs.kegControl.SetHeaterState(FIRST, state)
 		tcs.kegControl.SetHeaterState(SECOND, state)
 	}
@@ -69,15 +67,15 @@ func (tcs TempControlStruct) loopTemp(ticker *time.Ticker) {
 				break
 			}
 
-			log.Printf("Current temp is %+v, heater state is %+v\n", currTemp)
-			if currTemp+tcs.dispresion > tcs.temp {
-				log.Printf("Disabling heaters, temps: %+v > %+v\n", currTemp+tcs.dispresion, tcs.temp)
-				enableHeaters(OFF)
-			}
-
-			if currTemp-tcs.dispresion < tcs.temp {
+			log.Printf("Current temp is %+v, desired temp is %+v\n", currTemp, tcs.temp)
+			if currTemp < tcs.temp-tcs.dispresion {
 				log.Printf("Enabling heaters, temps: %+v < %+v\n", currTemp-tcs.dispresion, tcs.temp)
 				enableHeaters(ON)
+			}
+
+			if currTemp > tcs.temp+tcs.dispresion {
+				log.Printf("Disabling heaters, temps: %+v > %+v\n", currTemp+tcs.dispresion, tcs.temp)
+				enableHeaters(OFF)
 			}
 
 		case <-tcs.quit:

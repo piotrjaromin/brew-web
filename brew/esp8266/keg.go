@@ -41,7 +41,7 @@ func (k kegStruct) ToggleHeater(h keg.Heater) {
 }
 
 func (k kegStruct) SetHeaterState(h keg.Heater, enabled keg.HeaterState) {
-	log.Printf("toggle heater: %+v", h)
+	log.Printf("Heater %+v state set to: %+v", h, enabled)
 
 	handleErr := func(err error, statusCode int) {
 		if err != nil {
