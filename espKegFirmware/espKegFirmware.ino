@@ -19,8 +19,9 @@ ESP8266WebServer server(80);
 #define ONE_WIRE_BUS 4
 
 // Replace with your network details
-const char* ssid = "WIFI_NETWORK_NAME";
-const char* password = "WIFI_PASSWORD";
+
+const char* ssid = "SET_ME_UP";
+const char* password = "SET_ME_UP";
 
 // Setup a oneWire instance to communicate with any OneWire devices (not just Maxim/Dallas temperature ICs)
 OneWire oneWire(ONE_WIRE_BUS);
@@ -57,15 +58,22 @@ void disableHeater(int pin) {
 
 void APIForHeaters(String path, int pin) {
   Serial.println("Handling requests for path " + path + "\n");
-  server.on(path, HTTP_POST, [&pin](){
+
+  server.on(path, HTTP_GET, [pin](){
+    heaterStatus(pin);
+  });
+
+  server.on(path, HTTP_POST, [pin](){
     toggleHeater(pin);
   });
 
-  server.on(path, HTTP_PUT, [&pin](){
+  server.on(path, HTTP_PUT, [pin, path](){
+    Serial.println("HTTP_PUT requests for path " + path + "Pin is " + String(pin) + "\n" );
     enableHeater(pin);
   });
 
-  server.on(path, HTTP_DELETE, [&pin](){
+  server.on(path, HTTP_DELETE, [pin, path](){
+    Serial.println("HTTP_DELETE requests for path " + path + "Pin is " + String(pin) + "\n" );
     disableHeater(pin);
   });
 }

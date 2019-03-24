@@ -69,14 +69,13 @@ func (tcs TempControlStruct) loopTemp(ticker *time.Ticker) {
 				break
 			}
 
-			heaterEnabled := tcs.kegControl.HeaterState(FIRST)
-			log.Printf("Current temp is %+v, heater state is %+v\n", currTemp, heaterEnabled)
-			if currTemp+tcs.dispresion > tcs.temp && heaterEnabled {
+			log.Printf("Current temp is %+v, heater state is %+v\n", currTemp)
+			if currTemp+tcs.dispresion > tcs.temp {
 				log.Printf("Disabling heaters, temps: %+v > %+v\n", currTemp+tcs.dispresion, tcs.temp)
 				enableHeaters(OFF)
 			}
 
-			if currTemp-tcs.dispresion < tcs.temp && !heaterEnabled {
+			if currTemp-tcs.dispresion < tcs.temp {
 				log.Printf("Enabling heaters, temps: %+v < %+v\n", currTemp-tcs.dispresion, tcs.temp)
 				enableHeaters(ON)
 			}
