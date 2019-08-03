@@ -32,7 +32,11 @@ func (k kegStruct) Temperature() (float64, error) {
 }
 
 func (k kegStruct) SetHeaterState(h keg.Heater, enabled keg.HeaterState) {
-	panic("Not implemented")
+	if enabled {
+		k.heaters[h].High()
+	} else {
+		k.heaters[h].Low()
+	}
 }
 
 func NewKeg(tempDev W1Device) (keg.KegControl, error) {

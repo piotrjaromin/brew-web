@@ -1,0 +1,21 @@
+sudo: required
+language: go
+
+services:
+- docker
+
+before_install:
+- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
+script:
+- go mod vendor
+- go test ./...
+- docker build -t ${NAME} .
+- docker tag ${NAME} ${DOCKER_USERNAME}/${NAME}:$COMMIT
+- docker push ${DOCKER_USERNAME}/${NAME}:$COMMIT
+
+env:
+  global:
+  - GO111MODULE=on
+  - NAME=brew-web
+  - COMMIT=${TRAVIS_COMMIT::8}

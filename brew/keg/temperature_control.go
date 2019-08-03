@@ -36,7 +36,7 @@ func NewTempControl(kegControl KegControl, temp float64) TempControl {
 func (tcs *TempControlStruct) KeepTemp(temp float64) {
 	log.Println("new temp to keep is ", temp)
 	if !tcs.started {
-		ticker := time.NewTicker(5 * time.Second)
+		ticker := time.NewTicker(15 * time.Second)
 		tcs.started = true
 		go func() {
 			go tcs.loopTemp(ticker)
@@ -46,12 +46,12 @@ func (tcs *TempControlStruct) KeepTemp(temp float64) {
 	tcs.temp = temp
 }
 
-func (tcs TempControlStruct) Stop() {
+func (tcs *TempControlStruct) Stop() {
 	tcs.quit <- struct{}{}
 	tcs.started = false
 }
 
-func (tcs TempControlStruct) loopTemp(ticker *time.Ticker) {
+func (tcs *TempControlStruct) loopTemp(ticker *time.Ticker) {
 
 	enableHeaters := func(state HeaterState) {
 		tcs.kegControl.SetHeaterState(FIRST, state)
