@@ -17,6 +17,7 @@ type TempControlStruct struct {
 	dispresion float64
 	started    bool
 	kegControl KegControl
+	interval   time.Duration
 }
 
 func NewTempControl(kegControl KegControl, temp float64) TempControl {
@@ -28,6 +29,7 @@ func NewTempControl(kegControl KegControl, temp float64) TempControl {
 		2,
 		false,
 		kegControl,
+		15 * time.Second,
 	}
 
 	return TempControl(&tcs)
@@ -36,7 +38,7 @@ func NewTempControl(kegControl KegControl, temp float64) TempControl {
 func (tcs *TempControlStruct) KeepTemp(temp float64) {
 	log.Println("new temp to keep is ", temp)
 	if !tcs.started {
-		ticker := time.NewTicker(15 * time.Second)
+		ticker := time.NewTicker(tcs.interval)
 		tcs.started = true
 		go func() {
 			go tcs.loopTemp(ticker)

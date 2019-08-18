@@ -5,18 +5,19 @@ import (
 	"log"
 	"net/http"
 
+	"net"
+	"os"
+
 	"github.com/piotrjaromin/brew-web/brew/esp8266"
 	"github.com/piotrjaromin/brew-web/brew/keg"
 	"github.com/piotrjaromin/brew-web/brew/pi"
 	"github.com/piotrjaromin/brew-web/brew/web"
-	"net"
-	"os"
 )
 
 func main() {
 
 	kegControl, err := getKegControl()
-	tempCache := keg.NewTemperatureCache(kegControl, 20, 100)
+	tempCache := keg.NewTemperatureStore(kegControl, 20, 100)
 	tempControl := keg.NewTempControl(kegControl, 20)
 	cook := keg.CreateCook(tempControl)
 
@@ -26,7 +27,7 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	route(mux, "/", http.FileServer(http.Dir("public")))
+	route(mux, "/", http.FileServer(http.Dir("web-ui/build")))
 	route(mux, "/heaters/1", web.CreateHandlerForHeater(keg.FIRST, kegControl))
 	route(mux, "/heaters/2", web.CreateHandlerForHeater(keg.SECOND, kegControl))
 	route(mux, "/temperatures", web.CreateTempHandler(tempCache))

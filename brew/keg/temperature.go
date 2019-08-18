@@ -9,7 +9,7 @@ type Temperatures interface {
 	Get() []TemperaturePoint
 }
 
-type TemperatureCache struct {
+type TemperatureStore struct {
 	maxCacheSize int
 	cache        []TemperaturePoint
 }
@@ -19,21 +19,21 @@ type TemperaturePoint struct {
 	TimeStamp time.Time `json:"timestamp"`
 }
 
-func (t TemperatureCache) Get() []TemperaturePoint {
+func (t TemperatureStore) Get() []TemperaturePoint {
 
 	return t.cache
 }
 
-func (t *TemperatureCache) add(s float64) {
+func (t *TemperatureStore) add(s float64) {
 	t.cache = append(t.cache, TemperaturePoint{s, time.Now()})
 	if len(t.cache) > t.maxCacheSize {
 		t.cache = t.cache[1:len(t.cache)]
 	}
 }
 
-func NewTemperatureCache(keg KegControl, intervalSec time.Duration, cacheSize int) Temperatures {
+func NewTemperatureStore(keg KegControl, intervalSec time.Duration, cacheSize int) Temperatures {
 
-	t := &TemperatureCache{
+	t := &TemperatureStore{
 		cacheSize,
 		make([]TemperaturePoint, 0, cacheSize),
 	}
@@ -45,7 +45,7 @@ func NewTemperatureCache(keg KegControl, intervalSec time.Duration, cacheSize in
 
 			temp, err := keg.Temperature()
 			if err != nil {
-				log.Print("[T-Cache]Could not read temperature", err)
+				log.Print("[Temp] Could not read temperature", err)
 				return
 			}
 			t.add(temp)

@@ -59,7 +59,7 @@ func (k *KegMock) Temperature() (float64, error) {
 		k.temp += 0.6
 	}
 
-	if k.heater1 == OFF && k.heater1 == OFF {
+	if k.heater1 == OFF && k.heater2 == OFF {
 		k.temp--
 	}
 
