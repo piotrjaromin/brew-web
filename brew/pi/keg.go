@@ -7,8 +7,8 @@ import (
 	rpio "github.com/stianeikeland/go-rpio"
 )
 
-const HEATER1_PIN = 14
-const HEATER2_PIN = 15
+const HEATER1_PIN = 23 // BCM 23 - 16
+const HEATER2_PIN = 24 // BCM 24 - 18
 
 type kegStruct struct {
 	heaters []rpio.Pin
