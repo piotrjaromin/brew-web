@@ -40,5 +40,4 @@ webpack --progress
 
 ## Static assets
 
-Binary contains static assets loaded thourhg `https://github.com/rakyll/statik`
-
+Binary contains static assets loaded through `https://github.com/rakyll/statik`
