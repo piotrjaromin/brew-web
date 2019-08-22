@@ -12,6 +12,10 @@ import (
 	"github.com/piotrjaromin/brew-web/brew/keg"
 	"github.com/piotrjaromin/brew-web/brew/pi"
 	"github.com/piotrjaromin/brew-web/brew/web"
+
+	"github.com/rakyll/statik/fs"
+
+	_ "github.com/piotrjaromin/brew-web/statik"
 )
 
 func main() {
@@ -25,9 +29,16 @@ func main() {
 		log.Panic("Error while creating keg. Details: ", err)
 	}
 
+	statikFS, err := fs.New()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	mux := http.NewServeMux()
 
-	route(mux, "/", http.FileServer(http.Dir("web-ui/build")))
+	// route(mux, "/", http.FileServer(http.Dir("web-ui/build")))
+	route(mux, "/", http.FileServer(statikFS))
+
 	route(mux, "/heaters/1", web.CreateHandlerForHeater(keg.FIRST, kegControl))
 	route(mux, "/heaters/2", web.CreateHandlerForHeater(keg.SECOND, kegControl))
 	route(mux, "/temperatures", web.CreateTempHandler(tempCache))

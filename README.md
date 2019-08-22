@@ -33,6 +33,12 @@ webpack --progress
 ```
 
 ## TODOS
+
 - Nice ui
 - error handling
 - finish recipes
+
+## Static assets
+
+Binary contains static assets loaded thourhg `https://github.com/rakyll/statik`
+
