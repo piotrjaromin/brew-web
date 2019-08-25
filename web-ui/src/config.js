@@ -1,6 +1,6 @@
 
 const config = {
-    backendUrl: `${window.location.hostname}:${window.location.port}`,
+    backendUrl: window.location.href,
 };
 
 export default config;

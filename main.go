@@ -36,9 +36,7 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	// route(mux, "/", http.FileServer(http.Dir("web-ui/build")))
 	route(mux, "/", http.FileServer(statikFS))
-
 	route(mux, "/heaters/1", web.CreateHandlerForHeater(keg.FIRST, kegControl))
 	route(mux, "/heaters/2", web.CreateHandlerForHeater(keg.SECOND, kegControl))
 	route(mux, "/temperatures", web.CreateTempHandler(tempCache))
