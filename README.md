@@ -1,6 +1,6 @@
 # brew-web
 
-`mdsn` drivers need to be installed on system running go server code. They are used to discover esp
+`mDNS` drivers need to be installed on system running go server code. They are used to discover esp
 
 Connects to esp running in network(can be anything else with http endpoints).
 
