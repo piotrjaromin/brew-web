@@ -25,7 +25,7 @@ class Info extends React.Component {
 
     refresh() {
 
-        axios.get(`${backendUrl}/temperatures`).then(resp => {
+        axios.get(`${backendUrl}temperatures`).then(resp => {
             if (resp.status === 200) {
                 this.setState({
                     data: resp.data.map(point => {

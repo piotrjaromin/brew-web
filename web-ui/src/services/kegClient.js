@@ -10,7 +10,7 @@ export default function create() {
 
     function toggleHeater(heaterNo, state) {
         logger.info(`setting heater state ${heaterNo} to ${state}`);
-        return axios.post(`${backendUrl}/heaters/${heaterNo}`, { 'state': state })
+        return axios.post(`${backendUrl}heaters/${heaterNo}`, { 'state': state })
             .then(resp => {
                 if (resp.status !== 200) {
                     return logger.error(`Invalid response from backend. ${resp.status}: ${resp.data}`);
@@ -22,7 +22,7 @@ export default function create() {
     }
 
     function getHeaterState(heaterNo) {
-        return axios.get(`${backendUrl}/heaters/${heaterNo}`)
+        return axios.get(`${backendUrl}heaters/${heaterNo}`)
             .then(resp => {
                 if (resp.status === 200) {
                     return resp.data.state;
@@ -33,7 +33,7 @@ export default function create() {
 
     function setTemp(temp) {
         axios
-            .post(`${backendUrl}/temperatures/control`, { value: temp})
+            .post(`${backendUrl}temperatures/control`, { value: temp})
             .then( resp => {
                 if (resp.status !== 200) {
                     return logger.error(`Wrong status code response for set temp ${resp.statusCode}`)
@@ -48,7 +48,7 @@ export default function create() {
 
     function disableTempControl() {
         axios
-            .delete(`${backendUrl}/temperatures/control`)
+            .delete(`${backendUrl}temperatures/control`)
             .then( resp => {
                 if (resp.status !== 200) {
                     return logger.error(`Wrong status code for delete temp response ${resp.statusCode}`);

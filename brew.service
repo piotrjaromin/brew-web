@@ -1,0 +1,35 @@
+# Put in /lib/systemd/system/brew.service
+# sudo chmod 755 /lib/systemd/system/brew.service
+# sudo systemctl enable brew
+# sudo systemctl start brew
+# sudo journalctl -f -u brew
+# Create user sudo useradd brewservice -s /sbin/nologin -M
+[Unit]
+Description=Brew service
+ConditionPathExists=/home/pi/brew-web
+After=network.target
+
+[Service]
+Type=simple
+#User=brewservice
+#Group=brewservice
+LimitNOFILE=1024
+
+Restart=on-failure
+RestartSec=10
+startLimitIntervalSec=60
+
+WorkingDirectory=/home/pi
+ExecStart=/home/pi/brew-web -type=pi
+
+# make sure log directory exists and owned by syslog
+PermissionsStartOnly=true
+ExecStartPre=/bin/mkdir -p /var/log/brewservice
+ExecStartPre=/bin/chown syslog:adm /var/log/brewservice
+ExecStartPre=/bin/chmod 755 /var/log/brewservice
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=brewservice
+
+[Install]
+WantedBy=multi-user.target
