@@ -54,37 +54,40 @@ func (tcs *TempControlStruct) Stop() {
 }
 
 func (tcs *TempControlStruct) loopTemp(ticker *time.Ticker) {
-
-	enableHeaters := func(state HeaterState) {
-		tcs.kegControl.SetHeaterState(FIRST, state)
-		tcs.kegControl.SetHeaterState(SECOND, state)
-	}
-
 	for {
 		select {
 		case <-ticker.C:
-			currTemp, err := tcs.kegControl.Temperature()
-			if err != nil {
-				log.Printf("Error while reading temperature. %s", err.Error())
-				break
-			}
-
-			log.Printf("Current temp is %+v, desired temp is %+v\n", currTemp, tcs.temp)
-			if currTemp < tcs.temp-tcs.dispresion {
-				log.Printf("Enabling heaters, temps: %+v < %+v\n", currTemp-tcs.dispresion, tcs.temp)
-				enableHeaters(ON)
-			}
-
-			if currTemp > tcs.temp+tcs.dispresion {
-				log.Printf("Disabling heaters, temps: %+v > %+v\n", currTemp+tcs.dispresion, tcs.temp)
-				enableHeaters(OFF)
-			}
-
+			updateHeaters(tcs.kegControl, tcs.temp, tcs.dispresion)
 		case <-tcs.quit:
 			ticker.Stop()
 			return
 		}
 	}
+}
+
+func updateHeaters(kegControl KegControl, desiredTmp, deltaTmp float64) {
+	enableHeaters := func(state HeaterState) {
+		kegControl.SetHeaterState(FIRST, state)
+		kegControl.SetHeaterState(SECOND, state)
+	}
+
+	currTemp, err := kegControl.Temperature()
+	if err != nil {
+		log.Printf("Error while reading temperature. %s", err.Error())
+		return
+	}
+
+	log.Printf("Current temp is %+v, desired temp is %+v\n", currTemp, desiredTmp)
+	if currTemp < desiredTmp-deltaTmp {
+		log.Printf("Enabling heaters, temps: %+v < %+v\n", currTemp-deltaTmp, desiredTmp)
+		enableHeaters(ON)
+	}
+
+	if currTemp > desiredTmp+deltaTmp {
+		log.Printf("Disabling heaters, temps: %+v > %+v\n", currTemp+deltaTmp, desiredTmp)
+		enableHeaters(OFF)
+	}
+
 }
 
 func (tcs TempControlStruct) GetTemp() float64 {
