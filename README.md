@@ -41,3 +41,12 @@ webpack --progress
 ## Static assets
 
 Binary contains static assets loaded through `https://github.com/rakyll/statik`
+
+install
+
+```
+go get github.com/rakyll/statik
+npm i --prefix web-ui
+npm run build --prefix web-ui
+statik -f -src=web-ui/build
+```

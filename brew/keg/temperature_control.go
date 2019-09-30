@@ -26,10 +26,10 @@ func NewTempControl(kegControl KegControl, temp float64) TempControl {
 	tcs := TempControlStruct{
 		temp,
 		make(chan struct{}),
-		2,
+		1,
 		false,
 		kegControl,
-		15 * time.Second,
+		5 * time.Second,
 	}
 
 	return TempControl(&tcs)

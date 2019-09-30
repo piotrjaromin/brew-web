@@ -1,5 +1,6 @@
+
 start:
-	go run main.go -type=esp
+	go run main.go -type=mock
 
 web:
 	npm --prefix web-ui run start

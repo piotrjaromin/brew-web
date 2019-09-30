@@ -1,123 +1,93 @@
 package web
 
 import (
-	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/piotrjaromin/brew-web/brew/keg"
+
+	"github.com/labstack/echo/v4"
 )
 
-func CreateHandlerForHeater(heater keg.Heater, kegControl keg.KegControl) http.HandlerFunc {
-
-	writeState := func(rw http.ResponseWriter, state keg.HeaterState) {
-
-		stateMarshaled, err := json.Marshal(HeaterState{
-			State: state,
-		})
-
-		if err != nil {
-			HandlerError(rw, err)
-			return
-		}
-
-		rw.Write(stateMarshaled)
+func InitHeater(e *echo.Echo, heater keg.Heater, kegControl keg.KegControl) {
+	get := func(c echo.Context) error {
+		state := kegControl.HeaterState(heater)
+		return c.JSON(http.StatusOK, HeaterState{state})
 	}
 
-	return func(rw http.ResponseWriter, req *http.Request) {
-		switch req.Method {
-		case http.MethodGet:
-			writeState(rw, kegControl.HeaterState(heater))
-		case http.MethodPost:
-			decoder := json.NewDecoder(req.Body)
-			state := HeaterState{}
-			if err := decoder.Decode(&state); err != nil {
-				println("1")
-				HandlerError(rw, err)
-				return
-			}
+	post := func(c echo.Context) error {
+		state := new(HeaterState)
 
-			println("2")
-			kegControl.SetHeaterState(heater, state.State)
-			writeState(rw, state.State)
+		if err := c.Bind(state); err != nil {
+			return err
 		}
+
+		kegControl.SetHeaterState(heater, state.State)
+		return c.JSON(http.StatusOK, state)
 	}
 
+	e.GET(fmt.Sprintf("/heaters/%d", heater), get)
+	e.POST(fmt.Sprintf("/heaters/%d", heater), post)
 }
 
-func CreateTempHandler(t keg.Temperatures) http.HandlerFunc {
-
-	return func(rw http.ResponseWriter, req *http.Request) {
-		tempsJson, err := json.Marshal(t.Get())
-
-		if err != nil {
-			HandlerError(rw, err)
-			return
-		}
-
-		rw.Write(tempsJson)
+func InitTemp(e *echo.Echo, t keg.Temperatures) {
+	get := func(c echo.Context) error {
+		return c.JSON(http.StatusOK, t.Get())
 	}
 
+	e.GET("/temperatures", get)
 }
 
-func CreateTempControlHandler(tempControl keg.TempControl) http.HandlerFunc {
-
-	return func(rw http.ResponseWriter, req *http.Request) {
-
-		switch req.Method {
-		case http.MethodGet:
-			tempJSON, err := json.Marshal(Temp{tempControl.GetTemp()})
-
-			if err != nil {
-				HandlerError(rw, err)
-				return
-			}
-
-			rw.Write(tempJSON)
-
-		case http.MethodPost:
-			decoder := json.NewDecoder(req.Body)
-			temp := Temp{}
-			if err := decoder.Decode(&temp); err != nil {
-				HandlerError(rw, err)
-				return
-			}
-			tempControl.KeepTemp(temp.Value)
-
-		case http.MethodDelete:
-			tempControl.Stop()
-		}
+func InitTempControl(e *echo.Echo, tempControl keg.TempControl) {
+	get := func(c echo.Context) error {
+		return c.JSON(http.StatusOK, Temp{tempControl.GetTemp()})
 	}
+
+	delete := func(c echo.Context) error {
+		tempControl.Stop()
+		return c.NoContent(http.StatusNoContent)
+	}
+
+	post := func(c echo.Context) error {
+		temp := new(Temp)
+
+		if err := c.Bind(temp); err != nil {
+			return err
+		}
+
+		tempControl.KeepTemp(temp.Value)
+		return c.JSON(http.StatusOK, temp)
+	}
+
+	e.GET("/temperatures/control", get)
+	e.POST("/temperatures/control", post)
+	e.DELETE("/temperatures/control", delete)
 }
 
-func CreateRecipesHandler(cook keg.Cook) http.HandlerFunc {
-
-	var recipe keg.RecipeStruct
-	return func(rw http.ResponseWriter, req *http.Request) {
-
-		switch req.Method {
-		case http.MethodGet:
-			recipeJSON, err := json.Marshal(recipe)
-			if err != nil {
-				HandlerError(rw, err)
-				return
-			}
-
-			rw.Write(recipeJSON)
-
-		case http.MethodPost:
-			decoder := json.NewDecoder(req.Body)
-
-			if err := decoder.Decode(&recipe); err != nil {
-				HandlerError(rw, err)
-				return
-			}
-			cook.Execute(recipe)
-
-		case http.MethodDelete:
-			cook.Stop()
-		}
+func InitRecipes(e *echo.Echo, cook keg.Cook) {
+	get := func(c echo.Context) error {
+		return c.JSON(http.StatusOK, keg.RecipeStruct{})
 	}
+
+	post := func(c echo.Context) error {
+		recipe := new(keg.RecipeStruct)
+		if err := c.Bind(recipe); err != nil {
+			return err
+		}
+
+		cook.Execute(recipe)
+		return c.JSON(http.StatusOK, recipe)
+	}
+
+	delete := func(c echo.Context) error {
+		cook.Stop()
+		return c.NoContent(http.StatusNoContent)
+	}
+
+	e.GET("/recipes", get)
+	e.POST("/recipes", post)
+	e.DELETE("/recipes", delete)
 }
 
 func HandlerError(rw http.ResponseWriter, err error) {

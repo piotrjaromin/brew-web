@@ -13,9 +13,17 @@ import (
 	"github.com/piotrjaromin/brew-web/brew/pi"
 	"github.com/piotrjaromin/brew-web/brew/web"
 
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+
 	"github.com/rakyll/statik/fs"
 
 	_ "github.com/piotrjaromin/brew-web/statik"
+)
+
+var (
+	ShortCommit string
+	Version     string
 )
 
 func main() {
@@ -34,43 +42,36 @@ func main() {
 		log.Fatal(err)
 	}
 
-	mux := http.NewServeMux()
+	e := echo.New()
 
-	route(mux, "/", http.FileServer(statikFS))
-	route(mux, "/heaters/1", web.CreateHandlerForHeater(keg.FIRST, kegControl))
-	route(mux, "/heaters/2", web.CreateHandlerForHeater(keg.SECOND, kegControl))
-	route(mux, "/temperatures", web.CreateTempHandler(tempCache))
-	route(mux, "/temperatures/control", web.CreateTempControlHandler(tempControl))
-	route(mux, "/recipes", web.CreateRecipesHandler(cook))
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+	}))
 
+	web.InitHeater(e, keg.FIRST, kegControl)
+	web.InitHeater(e, keg.SECOND, kegControl)
+	web.InitTemp(e, tempCache)
+	web.InitTempControl(e, tempControl)
+	web.InitRecipes(e, cook)
+
+	fileServer := http.FileServer(statikFS)
+	e.GET("/*", func(c echo.Context) error {
+		fileServer.ServeHTTP(c.Response().Writer, c.Request())
+		return nil
+	})
+
+	log.Printf("Version: %s, commit: %s", Version, ShortCommit)
 	log.Println("Listening... :3001")
-	log.Fatal(http.ListenAndServe(":3001", mux))
+	e.Logger.Fatal(e.Start(":3001"))
 
-}
-
-func route(mux *http.ServeMux, path string, handler http.Handler) {
-	mux.Handle(path, corsHandler(handler))
-}
-
-func corsHandler(h http.Handler) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding")
-
-		if r.Method == "OPTIONS" {
-			return
-		}
-
-		h.ServeHTTP(w, r)
-	}
 }
 
 func getKegControl() (keg.KegControl, error) {
 
 	controllerTypePtr := flag.String("type", "mock", "Defines keg controller type can be mock, esp, pi. Defaults to mock")
 	moduleURL := flag.String("url", "esp8266.local", "Needed for esp type, provides root url of esp8266")
-	protocol := flag.String("protocol", "http://", "protcol at which esp8266 works")
+	protocol := flag.String("protocol", "http://", "protocol at which esp8266 works")
 
 	flag.Parse()
 

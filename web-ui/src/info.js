@@ -12,6 +12,7 @@ import TempControl from './tempControl';
 import config from './config';
 const { backendUrl } = config;
 
+const TEMP_REFRESH_INTERVAL = 5000;
 
 class Info extends React.Component {
 
@@ -20,7 +21,7 @@ class Info extends React.Component {
         this.refresh = this.refresh.bind(this);
         this.state = {data: []};
 
-        setInterval(this.refresh, 10000);
+        setInterval(this.refresh, TEMP_REFRESH_INTERVAL);
     }
 
     refresh() {

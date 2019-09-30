@@ -12,6 +12,8 @@ const logger = createSimpleLogger();
 const HEATER_1 = '1';
 const HEATER_2 = '2';
 
+const HEATER_REFRESH_INTERVAL = 5000;
+
 class HeaterControl extends React.Component {
 
     constructor(params) {
@@ -28,6 +30,8 @@ class HeaterControl extends React.Component {
         this.heaterState = this.heaterState.bind(this);
         this.updateHeatersState = this.updateHeatersState.bind(this);
         this.toggleHeater = this.toggleHeater.bind(this);
+
+        setInterval(this.updateHeatersState, HEATER_REFRESH_INTERVAL);
     }
 
     updateHeatersState() {
@@ -50,7 +54,6 @@ class HeaterControl extends React.Component {
     componentDidMount() {
         this.updateHeatersState()
     }
-
 
     heaterState(heaterNo) {
         return kegClient.getHeaterState(heaterNo);
