@@ -7,12 +7,12 @@
     "bootstrap": "^4.3.1",
     "moment": "^2.24.0",
     "react": "^16.7.0",
-    "react-bootstrap": "^1.0.0-beta.5",
+    "react-bootstrap": "^1.0.0-beta.12",
     "react-dom": "^16.7.0",
     "react-scripts": "2.1.8",
     "react-toggle-button": "^2.2.0",
-    "recharts": "^1.4.2",
-    "simple-node-logger": "^18.12.21"
+    "recharts": "^1.7.1",
+    "simple-node-logger": "^18.12.23"
   },
   "scripts": {
     "start": "react-scripts start",

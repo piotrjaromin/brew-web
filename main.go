@@ -64,7 +64,6 @@ func main() {
 	log.Printf("Version: %s, commit: %s", Version, ShortCommit)
 	log.Println("Listening... :3001")
 	e.Logger.Fatal(e.Start(":3001"))
-
 }
 
 func getKegControl() (keg.KegControl, error) {
