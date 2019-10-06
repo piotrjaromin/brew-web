@@ -1,0 +1,7 @@
+keg:
+  heaters:
+  - pin: 23 # BCM 23 - 16
+  - pin: 24 # BCM 24 - 18
+
+temperature:
+  refreshIntervalSeconds: 5

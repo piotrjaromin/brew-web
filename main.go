@@ -5,15 +5,10 @@ import (
 	"log"
 	"net/http"
 
-	"net"
-	"os"
-
 	"github.com/piotrjaromin/brew-web/brew/keg"
-	"github.com/piotrjaromin/brew-web/brew/keg/controllers/esp8266"
-	"github.com/piotrjaromin/brew-web/brew/keg/controllers/mock"
-	"github.com/piotrjaromin/brew-web/brew/keg/controllers/pi"
 	"github.com/piotrjaromin/brew-web/brew/recepies"
 
+	"github.com/piotrjaromin/brew-web/brew/config"
 	"github.com/piotrjaromin/brew-web/brew/temperature"
 	"github.com/piotrjaromin/brew-web/brew/web"
 
@@ -31,12 +26,17 @@ var (
 )
 
 func main() {
-	kegControl, err := getKegControl()
+	controllerTypePtr := flag.String("type", "mock", "Defines keg controller type can be mock, esp, pi. Defaults to mock")
+	flag.Parse()
+
+	conf := config.GetConfig("./config.json")
+
+	kegControl, err := keg.getKegControl(*controllerTypePtr)
 	if err != nil {
 		log.Panic("Error while creating keg. Details: ", err)
 	}
 
-	tempStore, err := temperature.NewTemperatureStore(kegControl, 20, 100)
+	tempStore, err := temperature.NewTemperatureStore(kegControl, conf.Keg.Temperature)
 	if err != nil {
 		log.Panic("Error while creating tempStore. Details: ", err)
 	}
@@ -71,51 +71,4 @@ func main() {
 	log.Printf("Version: %s, commit: %s", Version, ShortCommit)
 	log.Println("Listening... :3001")
 	e.Logger.Fatal(e.Start(":3001"))
-}
-
-func getKegControl() (keg.KegControl, error) {
-	controllerTypePtr := flag.String("type", "mock", "Defines keg controller type can be mock, esp, pi. Defaults to mock")
-	moduleURL := flag.String("url", "esp8266.local", "Needed for esp type, provides root url of esp8266")
-	protocol := flag.String("protocol", "http://", "protocol at which esp8266 works")
-
-	flag.Parse()
-
-	switch *controllerTypePtr {
-	case "esp":
-		log.Println("initializing esp")
-		return initEsp8266(*moduleURL, *protocol)
-	case "pi":
-		log.Println("initializing pi")
-		return initPi()
-	case "mock":
-		log.Println("Starting mock version")
-		return mock.NewKegMock()
-	default:
-		flag.PrintDefaults()
-		os.Exit(0)
-		return nil, nil
-	}
-}
-
-func initEsp8266(host, protocol string) (keg.KegControl, error) {
-
-	ips, err := net.LookupIP(host)
-	if err != nil {
-		return nil, err
-	}
-	return esp8266.NewKeg(protocol + ips[0].String())
-}
-
-func initPi() (keg.KegControl, error) {
-	devices, devErr := pi.GetDevices()
-	if devErr != nil {
-		log.Panic("Could not get list of devices. Details: ", devErr)
-	}
-
-	if len(devices) != 1 {
-		log.Panic("Found wrong amount of 1-wire devices. Got: ", len(devices))
-	}
-
-	log.Println("Starting rpio version")
-	return pi.NewKeg(devices[0])
 }

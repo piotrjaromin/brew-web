@@ -4,8 +4,12 @@ import (
 	"log"
 	"time"
 
-	"github.com/piotrjaromin/brew-web/brew/keg"
+	"github.com/piotrjaromin/brew-web/brew/config"
 )
+
+type ReadTemperature interface {
+	Temperature() (float64, error)
+}
 
 type Temperatures interface {
 	Get() ([]TemperaturePoint, error)
@@ -17,18 +21,18 @@ type TemperaturePoint struct {
 	TimeStamp time.Time `json:"timestamp"`
 }
 
-func NewTemperatureStore(keg keg.KegControl, intervalSec time.Duration, cacheSize int) (Temperatures, error) {
+func NewTemperatureStore(readTemp ReadTemperature, c config.Temperature) (Temperatures, error) {
 	t, err := CreateTempDb()
 	if err != nil {
 		return nil, err
 	}
 
-	ticker := time.NewTicker(intervalSec * time.Second)
+	ticker := time.NewTicker(c.RefreshInterval * time.Second)
 	go func() {
 		for {
 			<-ticker.C
 
-			temp, err := keg.Temperature()
+			temp, err := readTemp.Temperature()
 			if err != nil {
 				log.Print("[Temp] Could not read temperature", err)
 				return

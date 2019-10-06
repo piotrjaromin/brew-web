@@ -8,14 +8,12 @@ Temperature is taken every 5 seconds.
 
 Go code uses go modules so go version of 1.11 or higher is required.
 
-directory ./espKegFirmware contains arduino project source code for esp.
-
 ## Go Server for brewing can be run in two modes
 
-- prod mode, connects to esp or other device discovered by msdn
+- prod mode, on raspberry pi
 
 ```bash
-go run main.go -type=esp
+go run main.go -type=pi
 ```
 
 - mock mode, mocks connections to esp

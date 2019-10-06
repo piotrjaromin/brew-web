@@ -57,5 +57,4 @@ func (t *TemperatureDB) Add(s float64) error {
 		})
 		return err
 	})
-
 }
