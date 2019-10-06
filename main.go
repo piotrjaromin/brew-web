@@ -63,7 +63,6 @@ func main() {
 	}))
 
 	web.InitHeater(e, kegControl)
-	web.InitHeater(e, kegControl)
 	web.InitTemp(e, tempStore)
 	web.InitTempControl(e, tempControl)
 	web.InitRecipes(e, cook)

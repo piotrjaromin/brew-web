@@ -9,22 +9,15 @@
 
 ### Enable heater1
 # @name enableHeater1
-POST {{brewUrl}}/heaters/1 HTTP/1.1
+POST {{brewUrl}}/heaters HTTP/1.1
 Content-Type: application/json
 
-{ "state": true }
-
-### Enable heater2
-# @name enableHeater2
-POST {{brewUrl}}/heaters/2 HTTP/1.1
-Content-Type: application/json
-
-{ "state": true }
+{ "power": 1 }
 
 
 ### Get heater1
 # @name getHeater1
-GET {{brewUrl}}/heaters/1 HTTP/1.1
+GET {{brewUrl}}/heaters HTTP/1.1
 Content-Type: application/json
 
 ### Get heater1
