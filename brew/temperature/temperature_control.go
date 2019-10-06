@@ -68,11 +68,6 @@ func (tcs *TempControlStruct) loopTemp(ticker *time.Ticker) {
 }
 
 func updateHeaters(kegControl keg.KegControl, desiredTmp, deltaTmp float64) {
-	enableHeaters := func(state keg.HeaterState) {
-		kegControl.SetHeaterState(keg.FIRST, state)
-		kegControl.SetHeaterState(keg.SECOND, state)
-	}
-
 	currTemp, err := kegControl.Temperature()
 	if err != nil {
 		log.Printf("Error while reading temperature. %s", err.Error())
@@ -82,12 +77,12 @@ func updateHeaters(kegControl keg.KegControl, desiredTmp, deltaTmp float64) {
 	log.Printf("Current temp is %+v, desired temp is %+v\n", currTemp, desiredTmp)
 	if currTemp < desiredTmp-deltaTmp {
 		log.Printf("Enabling heaters, temps: %+v < %+v\n", currTemp-deltaTmp, desiredTmp)
-		enableHeaters(keg.ON)
+		kegControl.SetHeaterPower(1.0)
 	}
 
 	if currTemp > desiredTmp+deltaTmp {
 		log.Printf("Disabling heaters, temps: %+v > %+v\n", currTemp+deltaTmp, desiredTmp)
-		enableHeaters(keg.OFF)
+		kegControl.SetHeaterPower(0.0)
 	}
 
 }

@@ -27,7 +27,7 @@ func NewTemperatureStore(readTemp ReadTemperature, c config.Temperature) (Temper
 		return nil, err
 	}
 
-	ticker := time.NewTicker(c.RefreshInterval * time.Second)
+	ticker := time.NewTicker(time.Duration(c.RefreshIntervalSeconds) * time.Second)
 	go func() {
 		for {
 			<-ticker.C

@@ -3,13 +3,12 @@ package config
 import (
 	"fmt"
 	"os"
-	"time"
 
 	"gopkg.in/yaml.v2"
 )
 
 type Temperature struct {
-	RefreshInterval time.Duration `yaml:"refreshIntervalSeconds"`
+	RefreshIntervalSeconds int `yaml:"refreshIntervalSeconds"`
 }
 
 type Heater struct {
@@ -17,31 +16,31 @@ type Heater struct {
 }
 
 type Keg struct {
-	Heaters     []Heater    `yaml:"heaters"`
-	Temperature Temperature `yaml:"temperature"`
+	Heaters []Heater `yaml:"heaters"`
 }
 
 // Config contains configuration data for modules in this project
 type Config struct {
-	Keg Keg `yaml:"keg"`
+	Keg         Keg         `yaml:"keg"`
+	Temperature Temperature `yaml:"temperature"`
 }
 
 // GetConfig creates Config struct and fills it fields
 // from yaml found under configPath
-func GetConfig(configPath string) Config {
+func GetConfig(configPath string) (*Config, error) {
 	file, errFile := os.Open(configPath)
 	if errFile != nil {
-		fmt.Println("error while reading config file:", errFile)
+		return nil, fmt.Errorf("error while reading config file: %s", errFile.Error())
 	}
 
 	decoder := yaml.NewDecoder(file)
 	configuration := Config{}
 	err := decoder.Decode(&configuration)
 	if err != nil {
-		fmt.Println("error while un marshaling config file:", err)
+		return nil, fmt.Errorf("error while un marshaling config file: %s", errFile.Error())
 	}
 
-	return configuration
+	return &configuration, nil
 }
 
 // GetEnvOrDefault reads environment variable and returns value

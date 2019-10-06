@@ -9,22 +9,26 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func InitHeater(e *echo.Echo, heater keg.Heater, kegControl keg.KegControl) {
+func InitHeater(e *echo.Echo, kegControl keg.KegControl) {
 	get := func(c echo.Context) error {
-		state := kegControl.HeaterState(heater)
-		return c.JSON(http.StatusOK, HeaterState{state})
+		power := kegControl.GetHeaterPower()
+		return c.JSON(http.StatusOK, HeaterPower{power})
 	}
 
 	post := func(c echo.Context) error {
-		state := new(HeaterState)
-		if err := c.Bind(state); err != nil {
+		power := new(HeaterPower)
+		if err := c.Bind(power); err != nil {
 			return err
 		}
 
-		kegControl.SetHeaterState(heater, state.State)
-		return c.JSON(http.StatusOK, state)
+		kegControl.SetHeaterPower(power.Power)
+		return c.JSON(http.StatusOK, power)
 	}
 
-	e.GET(fmt.Sprintf("/heaters/%d", heater), get)
-	e.POST(fmt.Sprintf("/heaters/%d", heater), post)
+	e.GET(fmt.Sprintf("/heaters"), get)
+	e.POST(fmt.Sprintf("/heaters"), post)
+}
+
+type HeaterPower struct {
+	Power float64 `json:"power"`
 }

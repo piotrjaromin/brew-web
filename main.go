@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -29,14 +30,19 @@ func main() {
 	controllerTypePtr := flag.String("type", "mock", "Defines keg controller type can be mock, esp, pi. Defaults to mock")
 	flag.Parse()
 
-	conf := config.GetConfig("./config.json")
+	conf, err := config.GetConfig("./config.yml")
+	if err != nil {
+		log.Panic("Error while reading config. Details: ", err)
+	}
 
-	kegControl, err := keg.getKegControl(*controllerTypePtr)
+	fmt.Printf("%+v", *conf)
+
+	kegControl, err := keg.CreateKegControl(*controllerTypePtr, conf.Keg)
 	if err != nil {
 		log.Panic("Error while creating keg. Details: ", err)
 	}
 
-	tempStore, err := temperature.NewTemperatureStore(kegControl, conf.Keg.Temperature)
+	tempStore, err := temperature.NewTemperatureStore(kegControl, conf.Temperature)
 	if err != nil {
 		log.Panic("Error while creating tempStore. Details: ", err)
 	}
@@ -56,8 +62,8 @@ func main() {
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))
 
-	web.InitHeater(e, keg.FIRST, kegControl)
-	web.InitHeater(e, keg.SECOND, kegControl)
+	web.InitHeater(e, kegControl)
+	web.InitHeater(e, kegControl)
 	web.InitTemp(e, tempStore)
 	web.InitTempControl(e, tempControl)
 	web.InitRecipes(e, cook)

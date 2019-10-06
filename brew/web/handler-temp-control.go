@@ -33,3 +33,7 @@ func InitTempControl(e *echo.Echo, tempControl temperature.TempControl) {
 	e.POST("/temperatures/control", post)
 	e.DELETE("/temperatures/control", delete)
 }
+
+type Temp struct {
+	Value float64 `json:"value"`
+}

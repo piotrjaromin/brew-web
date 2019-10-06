@@ -2,43 +2,45 @@ package pi
 
 import (
 	"log"
+	"math"
 
 	"github.com/piotrjaromin/brew-web/brew/config"
-	"github.com/piotrjaromin/brew-web/brew/keg"
 
 	rpio "github.com/stianeikeland/go-rpio"
 )
 
 type kegStruct struct {
-	heaters []rpio.Pin
-	temp    W1Device
+	heaters      []rpio.Pin
+	heaterAmount int
+	temp         W1Device
 }
 
-func (k kegStruct) HeaterState(h keg.Heater) keg.HeaterState {
-	state := k.heaters[h].Read()
-	log.Printf("State for heater %+v is %+v", h, state)
-	return state != 0
+func (k *kegStruct) GetHeaterPower() float64 {
+	sum := 0.0
+
+	for _, heater := range k.heaters {
+		if heater.Read() == rpio.High {
+			sum = +1
+		}
+	}
+
+	return sum / float64(k.heaterAmount)
 }
 
-func (k kegStruct) ToggleHeater(h keg.Heater) {
-	log.Printf("toggle: %+v", h)
-	k.heaters[h].Toggle()
-}
-
-func (k kegStruct) Temperature() (float64, error) {
+func (k *kegStruct) Temperature() (float64, error) {
 	t, err := k.temp.Value(1, "t")
 	return float64(t) / 1000, err
 }
 
-func (k kegStruct) SetHeaterState(h keg.Heater, enabled keg.HeaterState) {
-	if enabled {
-		k.heaters[h].High()
-	} else {
-		k.heaters[h].Low()
+func (k *kegStruct) SetHeaterPower(power float64) {
+	val := int(math.Round(power * float64(k.heaterAmount)))
+
+	for heaterIndex := 0; heaterIndex < val; heaterIndex++ {
+		k.heaters[heaterIndex].High()
 	}
 }
 
-func NewKeg(tempDev W1Device, c config.Keg) (keg.KegControl, error) {
+func NewKeg(tempDev W1Device, c config.Keg) (*kegStruct, error) {
 	err := rpio.Open()
 	if err != nil {
 		log.Printf("could not open rpio. Details %+v\n", err)
@@ -54,10 +56,9 @@ func NewKeg(tempDev W1Device, c config.Keg) (keg.KegControl, error) {
 
 	temp := tempDev
 
-	k := kegStruct{
-		heaters: heaters,
-		temp:    temp,
-	}
-
-	return keg.KegControl(k), nil
+	return &kegStruct{
+		heaters:      heaters,
+		temp:         temp,
+		heaterAmount: len(heaters),
+	}, nil
 }
