@@ -6,6 +6,8 @@ import (
 	"net/http"
 
 	"github.com/piotrjaromin/brew-web/brew/keg"
+	"github.com/piotrjaromin/brew-web/brew/recepies"
+	"github.com/piotrjaromin/brew-web/brew/temperature"
 
 	"github.com/labstack/echo/v4"
 )
@@ -31,15 +33,20 @@ func InitHeater(e *echo.Echo, heater keg.Heater, kegControl keg.KegControl) {
 	e.POST(fmt.Sprintf("/heaters/%d", heater), post)
 }
 
-func InitTemp(e *echo.Echo, t keg.Temperatures) {
+func InitTemp(e *echo.Echo, t temperature.Temperatures) {
 	get := func(c echo.Context) error {
-		return c.JSON(http.StatusOK, t.Get())
+		point, err := t.Get()
+		if err != nil {
+			return err
+		}
+
+		return c.JSON(http.StatusOK, point)
 	}
 
 	e.GET("/temperatures", get)
 }
 
-func InitTempControl(e *echo.Echo, tempControl keg.TempControl) {
+func InitTempControl(e *echo.Echo, tempControl temperature.TempControl) {
 	get := func(c echo.Context) error {
 		return c.JSON(http.StatusOK, Temp{tempControl.GetTemp()})
 	}
@@ -65,13 +72,13 @@ func InitTempControl(e *echo.Echo, tempControl keg.TempControl) {
 	e.DELETE("/temperatures/control", delete)
 }
 
-func InitRecipes(e *echo.Echo, cook keg.Cook) {
+func InitRecipes(e *echo.Echo, cook recepies.Cook) {
 	get := func(c echo.Context) error {
-		return c.JSON(http.StatusOK, keg.RecipeStruct{})
+		return c.JSON(http.StatusOK, recepies.RecipeStruct{})
 	}
 
 	post := func(c echo.Context) error {
-		recipe := new(keg.RecipeStruct)
+		recipe := new(recepies.RecipeStruct)
 		if err := c.Bind(recipe); err != nil {
 			return err
 		}

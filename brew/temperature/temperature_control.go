@@ -1,8 +1,10 @@
-package keg
+package temperature
 
 import (
 	"log"
 	"time"
+
+	"github.com/piotrjaromin/brew-web/brew/keg"
 )
 
 type TempControl interface {
@@ -16,11 +18,11 @@ type TempControlStruct struct {
 	quit       chan struct{}
 	dispresion float64
 	started    bool
-	kegControl KegControl
+	kegControl keg.KegControl
 	interval   time.Duration
 }
 
-func NewTempControl(kegControl KegControl, temp float64) TempControl {
+func NewTempControl(kegControl keg.KegControl, temp float64) TempControl {
 
 	log.Println("Creating temp control")
 	tcs := TempControlStruct{
@@ -65,10 +67,10 @@ func (tcs *TempControlStruct) loopTemp(ticker *time.Ticker) {
 	}
 }
 
-func updateHeaters(kegControl KegControl, desiredTmp, deltaTmp float64) {
-	enableHeaters := func(state HeaterState) {
-		kegControl.SetHeaterState(FIRST, state)
-		kegControl.SetHeaterState(SECOND, state)
+func updateHeaters(kegControl keg.KegControl, desiredTmp, deltaTmp float64) {
+	enableHeaters := func(state keg.HeaterState) {
+		kegControl.SetHeaterState(keg.FIRST, state)
+		kegControl.SetHeaterState(keg.SECOND, state)
 	}
 
 	currTemp, err := kegControl.Temperature()
@@ -80,12 +82,12 @@ func updateHeaters(kegControl KegControl, desiredTmp, deltaTmp float64) {
 	log.Printf("Current temp is %+v, desired temp is %+v\n", currTemp, desiredTmp)
 	if currTemp < desiredTmp-deltaTmp {
 		log.Printf("Enabling heaters, temps: %+v < %+v\n", currTemp-deltaTmp, desiredTmp)
-		enableHeaters(ON)
+		enableHeaters(keg.ON)
 	}
 
 	if currTemp > desiredTmp+deltaTmp {
 		log.Printf("Disabling heaters, temps: %+v > %+v\n", currTemp+deltaTmp, desiredTmp)
-		enableHeaters(OFF)
+		enableHeaters(keg.OFF)
 	}
 
 }

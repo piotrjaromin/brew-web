@@ -4,3 +4,4 @@ vendor
 brew-web
 statik.go
 dist
+temp-data.db

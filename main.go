@@ -8,9 +8,13 @@ import (
 	"net"
 	"os"
 
-	"github.com/piotrjaromin/brew-web/brew/esp8266"
 	"github.com/piotrjaromin/brew-web/brew/keg"
-	"github.com/piotrjaromin/brew-web/brew/pi"
+	"github.com/piotrjaromin/brew-web/brew/keg/controllers/esp8266"
+	"github.com/piotrjaromin/brew-web/brew/keg/controllers/mock"
+	"github.com/piotrjaromin/brew-web/brew/keg/controllers/pi"
+	"github.com/piotrjaromin/brew-web/brew/recepies"
+
+	"github.com/piotrjaromin/brew-web/brew/temperature"
 	"github.com/piotrjaromin/brew-web/brew/web"
 
 	"github.com/labstack/echo/v4"
@@ -27,15 +31,18 @@ var (
 )
 
 func main() {
-
 	kegControl, err := getKegControl()
-	tempCache := keg.NewTemperatureStore(kegControl, 20, 100)
-	tempControl := keg.NewTempControl(kegControl, 20)
-	cook := keg.CreateCook(tempControl)
-
 	if err != nil {
 		log.Panic("Error while creating keg. Details: ", err)
 	}
+
+	tempStore, err := temperature.NewTemperatureStore(kegControl, 20, 100)
+	if err != nil {
+		log.Panic("Error while creating tempStore. Details: ", err)
+	}
+
+	tempControl := temperature.NewTempControl(kegControl, 20)
+	cook := recepies.CreateCook(tempControl)
 
 	statikFS, err := fs.New()
 	if err != nil {
@@ -51,7 +58,7 @@ func main() {
 
 	web.InitHeater(e, keg.FIRST, kegControl)
 	web.InitHeater(e, keg.SECOND, kegControl)
-	web.InitTemp(e, tempCache)
+	web.InitTemp(e, tempStore)
 	web.InitTempControl(e, tempControl)
 	web.InitRecipes(e, cook)
 
@@ -67,7 +74,6 @@ func main() {
 }
 
 func getKegControl() (keg.KegControl, error) {
-
 	controllerTypePtr := flag.String("type", "mock", "Defines keg controller type can be mock, esp, pi. Defaults to mock")
 	moduleURL := flag.String("url", "esp8266.local", "Needed for esp type, provides root url of esp8266")
 	protocol := flag.String("protocol", "http://", "protocol at which esp8266 works")
@@ -83,7 +89,7 @@ func getKegControl() (keg.KegControl, error) {
 		return initPi()
 	case "mock":
 		log.Println("Starting mock version")
-		return keg.NewKegMock()
+		return mock.NewKegMock()
 	default:
 		flag.PrintDefaults()
 		os.Exit(0)

@@ -1,27 +1,29 @@
-package keg
+package temperature
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+
+	"github.com/piotrjaromin/brew-web/brew/keg"
 )
 
 type mockKeg struct {
 	mock.Mock
-	state HeaterState
+	state keg.HeaterState
 	temp  float64
 }
 
-func (m mockKeg) ToggleHeater(h Heater) {
+func (m mockKeg) ToggleHeater(h keg.Heater) {
 	m.Called(h)
 }
 
-func (m mockKeg) SetHeaterState(h Heater, enabled HeaterState) {
+func (m mockKeg) SetHeaterState(h keg.Heater, enabled keg.HeaterState) {
 	m.Called(h, enabled)
 }
 
-func (m mockKeg) HeaterState(h Heater) HeaterState {
+func (m mockKeg) HeaterState(h keg.Heater) keg.HeaterState {
 	m.Called(h)
 	return m.state
 }
@@ -36,7 +38,7 @@ func TestTemperatureControl(t *testing.T) {
 	initTemp := 20.0
 	keg := &mockKeg{
 		temp:  initTemp,
-		state: OFF,
+		state: keg.OFF,
 	}
 
 	keg.On("Temperature").Return(initTemp)
@@ -46,17 +48,17 @@ func TestTemperatureControl(t *testing.T) {
 	updateHeaters(keg, initTemp, delta)
 	keg.AssertNotCalled(t, "SetHeaterState")
 
-	// // Call heaters on when temp is higher than delta
-	keg.On("SetHeaterState", FIRST, ON).Return()
-	keg.On("SetHeaterState", SECOND, ON).Return()
+	// // Call heaters keg.ON when temp is higher than delta
+	keg.On("SetHeaterState", keg.FIRST, keg.ON).Return()
+	keg.On("SetHeaterState", keg.SECOND, keg.ON).Return()
 
 	tmpHigherThanDelta := initTemp + delta + 1
 	updateHeaters(keg, tmpHigherThanDelta, delta)
 	updateHeaters(keg, tmpHigherThanDelta, delta)
 
-	// // Call heaters off when temp is lower than delta
-	keg.On("SetHeaterState", FIRST, OFF).Return()
-	keg.On("SetHeaterState", SECOND, OFF).Return()
+	// // Call heaters keg.OFF when temp is lower than delta
+	keg.On("SetHeaterState", keg.FIRST, keg.OFF).Return()
+	keg.On("SetHeaterState", keg.SECOND, keg.OFF).Return()
 
 	tmpLowerThanDelta := initTemp - delta - 1
 	updateHeaters(keg, tmpLowerThanDelta, delta)
@@ -69,7 +71,7 @@ func TestKeepTemp(t *testing.T) {
 	initTemp := 20.0
 	keg := &mockKeg{
 		temp:  initTemp,
-		state: OFF,
+		state: keg.OFF,
 	}
 
 	tcs := NewTempControl(keg, initTemp)

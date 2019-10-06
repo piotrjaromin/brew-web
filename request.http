@@ -1,0 +1,36 @@
+
+### Put in .vsocde/settings.json root
+# "rest-client.environmentVariables": {
+#     "$shared": {},
+#     "local": {
+#         "brewUrl": "http://localhost:3001",
+#     }
+# },
+
+### Enable heater1
+# @name enableHeater1
+POST {{brewUrl}}/heaters/1 HTTP/1.1
+Content-Type: application/json
+
+{ "state": true }
+
+### Enable heater2
+# @name enableHeater2
+POST {{brewUrl}}/heaters/2 HTTP/1.1
+Content-Type: application/json
+
+{ "state": true }
+
+
+### Get heater1
+# @name getHeater1
+GET {{brewUrl}}/heaters/1 HTTP/1.1
+Content-Type: application/json
+
+### Get heater1
+# @name getHeater1
+GET {{brewUrl}}/temperatures HTTP/1.1
+Content-Type: application/json
+
+
+

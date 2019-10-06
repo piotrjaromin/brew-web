@@ -1,6 +1,7 @@
 
+// REACT_APP_ prefix is required..
 const config = {
-    backendUrl: window.location.href,
+  backendUrl: process.env.REACT_APP_BACKEND_URL,
 };
 
 export default config;

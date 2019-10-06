@@ -7,6 +7,7 @@ const { backendUrl } = config;
 const logger = createSimpleLogger();
 
 export default function create() {
+    logger.info(`Backend url is ${backendUrl}`);
 
     function toggleHeater(heaterNo, state) {
         logger.info(`setting heater state ${heaterNo} to ${state}`);

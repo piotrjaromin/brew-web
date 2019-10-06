@@ -1,6 +1,10 @@
-package keg
+package recepies
 
-import "time"
+import (
+	"time"
+
+	"github.com/piotrjaromin/brew-web/brew/temperature"
+)
 
 type Elapsed int
 
@@ -18,7 +22,7 @@ type Cook interface {
 }
 
 type CookStruct struct {
-	tempControl TempControl
+	tempControl temperature.TempControl
 	quit        chan struct{}
 }
 
@@ -63,7 +67,7 @@ func (r RecipeStruct) TempForTime(t Elapsed) (float64, bool) {
 	return 0, true
 }
 
-func CreateCook(tempControl TempControl) Cook {
+func CreateCook(tempControl temperature.TempControl) Cook {
 
 	return CookStruct{tempControl, make(chan struct{})}
 }
