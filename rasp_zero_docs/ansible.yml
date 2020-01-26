@@ -1,0 +1,31 @@
+---
+- hosts: brewpi
+  remote_user: pi
+  become: yes
+
+  tasks:
+  - name: Download brew-web
+    get_url:
+      url: https://github.com/piotrjaromin/brew-web/releases/download/0.3.0/brew-web_0.3.0_Linux_armv6.tar.gz
+      dest: /home/pi/brew-web.tar.gz
+      mode: '0777'
+  - name: Extract
+    unarchive:
+      remote_src: yes
+      src: /home/pi/brew-web.tar.gz
+      dest: /home/pi
+  - name: copy service file
+    copy:
+      src: ./brew.service
+      dest: /lib/systemd/system
+      owner: pi
+      group: pi
+      mode: '0755'
+  - name: enable service brew
+    systemd:
+      name: brew
+      enabled: yes
+  - name: start bew service
+    systemd:
+      name: brew
+      state: started

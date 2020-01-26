@@ -56,3 +56,10 @@ ls /sys/bus/w1/devices/
 ```
 
 n.b. Using w1-gpio on the Raspberry Pi typically needs a 4.7 kΩ pull-up resistor connected between the GPIO pin and a 3.3v supply (e.g. header pin 1 or 17). Other means of connecting 1-Wire devices to the Raspberry Pi are also possible, such as using i2c to 1-Wire bridge chips.
+
+
+## Running ansible setup
+
+```bash
+ansible-playbook -k -i hosts ansible.yml
+```

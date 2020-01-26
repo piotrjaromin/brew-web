@@ -25,7 +25,7 @@ ExecStart=/home/pi/brew-web -type=pi
 # make sure log directory exists and owned by syslog
 PermissionsStartOnly=true
 ExecStartPre=/bin/mkdir -p /var/log/brewservice
-ExecStartPre=/bin/chown syslog:adm /var/log/brewservice
+ExecStartPre=/bin/chown syslog:pi /var/log/brewservice
 ExecStartPre=/bin/chmod 755 /var/log/brewservice
 StandardOutput=syslog
 StandardError=syslog
