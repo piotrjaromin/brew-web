@@ -74,6 +74,6 @@ func main() {
 	})
 
 	log.Printf("Version: %s, commit: %s", Version, ShortCommit)
-	log.Println("Listening... :3001")
-	e.Logger.Fatal(e.Start(":3001"))
+	log.Printf("Listening... %s \n", conf.Port)
+	e.Logger.Fatal(e.Start(fmt.Sprint(":%s", conf.Port)))
 }

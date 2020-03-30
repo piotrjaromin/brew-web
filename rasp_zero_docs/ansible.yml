@@ -1,25 +1,39 @@
 ---
 - hosts: brewpi
-  remote_user: pi
+  remote_user: root
   become: yes
+  vars:
+    workDir: /root
+    user: root
 
   tasks:
+  - name: Install mdns
+    shell: sudo apt-get install avahi-daemon
+  - name: Configure system
+    shell: dtoverlay w1-gpio gpiopin=4
   - name: Download brew-web
     get_url:
       url: https://github.com/piotrjaromin/brew-web/releases/download/0.3.0/brew-web_0.3.0_Linux_armv6.tar.gz
-      dest: /home/pi/brew-web.tar.gz
+      dest: "{{ workDir }}/brew-web.tar.gz"
       mode: '0777'
   - name: Extract
     unarchive:
       remote_src: yes
-      src: /home/pi/brew-web.tar.gz
-      dest: /home/pi
+      src: "{{ workDir }}/brew-web.tar.gz"
+      dest: "{{ workDir }}"
   - name: copy service file
     copy:
       src: ./brew.service
       dest: /lib/systemd/system
-      owner: pi
-      group: pi
+      owner: "{{ user }}"
+      group: "{{ user }}"
+      mode: '0755'
+  - name: copy config.yml
+    copy:
+      src: ../config.yml
+      dest: "{{ workDir }}"
+      owner: "{{ user }}"
+      group: "{{ user }}"
       mode: '0755'
   - name: enable service brew
     systemd:

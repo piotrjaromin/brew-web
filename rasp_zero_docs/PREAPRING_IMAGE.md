@@ -1,6 +1,6 @@
 # Preparing image
 
-1. Download raspbian lite - https://downloads.raspberrypi.org/raspbian_lite_latest
+1. Download raspbian lite - https://dietpi.com/downloads/images/DietPi_RPi-ARMv6-Buster.7z
 2. Install balena etcher - https://www.balena.io/etcher/
 3. Burn image to sd card with balenaEtcher
 4. on sdcard create file `wpa_supplicant.conf` with contents:
@@ -16,3 +16,12 @@
     }
 
 5. create empty `ssh` file on sd card root
+
+
+MDNS
+
+```bash
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install avahi-daemon
+```

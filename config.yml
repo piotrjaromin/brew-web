@@ -1,7 +1,11 @@
+port: 80
+
 keg:
   heaters:
-  - pin: 23 # BCM 23 - 16
-  - pin: 24 # BCM 24 - 18
+  - pin: 11 # BCM 27
+  - pin: 13 # BCM 22
+  # - pin: 23 # BCM 23
+  # - pin: 24 # BCM 24
 
 temperature:
   refreshIntervalSeconds: 5

@@ -22,6 +22,7 @@ type Keg struct {
 // Config contains configuration data for modules in this project
 type Config struct {
 	Keg         Keg         `yaml:"keg"`
+	Port        int         `yaml:"port"`
 	Temperature Temperature `yaml:"temperature"`
 }
 

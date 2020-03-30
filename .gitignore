@@ -5,3 +5,4 @@ brew-web
 statik.go
 dist
 temp-data.db
+rasp_zero_docs/scripts
