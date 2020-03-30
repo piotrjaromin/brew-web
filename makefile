@@ -5,5 +5,4 @@ start:
 web:
 	npm --prefix web-ui run start
 
-all:
-	start && web &&
+all: start web
