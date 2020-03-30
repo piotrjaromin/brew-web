@@ -4,9 +4,9 @@
 ## Prepare sd card
 
 to enable ssh drop `ssh` file to root of sd card.
-to enable wifi drop `wpa_supplicant` on root of sd card.
+to enable wifi drop `wpa_supplicant.conf` on root of sd card.
 
-```wpa_supplicant
+```wpa_supplicant.conf
 ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
 update_config=1
 country=PL # Country code
@@ -17,6 +17,9 @@ network={
 }
 ```
 
+
+
+
 ## W1 DS18B20 temperature sensor
 
 [source](https://pinout.xyz/pinout/1_wire)
@@ -25,6 +28,11 @@ To enable the one-wire interface you need to add the following line to /boot/con
 
 ```
 dtoverlay=w1-gpio
+```
+
+```
+dtoverlay w1-gpio gpiopin=4
+lsmod
 ```
 
 or
