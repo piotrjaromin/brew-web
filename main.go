@@ -22,8 +22,8 @@ import (
 )
 
 var (
-	ShortCommit string
-	Version     string
+	Commit  string
+	Version string
 )
 
 func main() {
@@ -73,7 +73,7 @@ func main() {
 		return nil
 	})
 
-	log.Printf("Version: %s, commit: %s", Version, ShortCommit)
-	log.Printf("Listening... %s \n", conf.Port)
+	log.Printf("Version: %s, commit: %s", Version, Commit)
+	log.Printf("Listening... %d\n", conf.Port)
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", conf.Port)))
 }

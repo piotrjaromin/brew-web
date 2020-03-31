@@ -2,6 +2,8 @@
 # Make sure to check the documentation at http://goreleaser.com
 builds:
 -
+  ldflags:
+    - -s -w -X "main.Version={{.Env.Version}}" -X "main.Commit={{.Env.Commit}}"
   env:
     - CGO_ENABLED=0
   goarch:
