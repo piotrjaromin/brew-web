@@ -13,7 +13,7 @@
     shell: dtoverlay w1-gpio gpiopin=4
   - name: Download brew-web
     get_url:
-      url: https://github.com/piotrjaromin/brew-web/releases/download/0.3.0/brew-web_0.3.0_Linux_armv6.tar.gz
+      url: https://github.com/piotrjaromin/brew-web/releases/download/0.4.3/brew-web_0.4.3_Linux_armv6.tar.gz
       dest: "{{ workDir }}/brew-web.tar.gz"
       mode: '0777'
   - name: Extract
