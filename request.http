@@ -3,7 +3,7 @@
 # "rest-client.environmentVariables": {
 #     "$shared": {},
 #     "local": {
-#         "brewUrl": "http://localhost:3001",
+#         "brewUrl": "http://localhost:80",
 #     }
 # },
 

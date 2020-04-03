@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { Button, FormGroup, FormLabel, FormControl, ButtonToolbar } from 'react-bootstrap';
 
@@ -8,45 +8,34 @@ import { createSimpleLogger } from 'simple-node-logger';
 const kegClient = createKegClient();
 const logger = createSimpleLogger();
 
+const TempControl = () => {
+    const [ temp, setTemp ] = useState(0);
 
-class TempControl extends React.Component {
-
-    constructor(params) {
-        super(params);
-        this.state = {};
-        this.handleTempChange = this.handleTempChange.bind(this);
-        this.handleSetTemp = this.handleSetTemp.bind(this);
-        this.handleDisableTemp = this.handleDisableTemp.bind(this);
+    function handleTempChange(e) {
+        const val = Number(e.target.value);
+        logger.info("setting temp to " + val);
+        setTemp(val);
     }
 
-    handleTempChange(e) {
-        logger.info("setting temp to " + e.target.value);
-        this.setState({temp : Number(e.target.value)});
+    function handleSetTemp() {
+        kegClient.setTemp(temp);
     }
 
-    handleSetTemp(e) {
-        kegClient.setTemp(this.state.temp);
-    }
-
-    handleDisableTemp(e) {
+    function handleDisableTemp() {
         kegClient.disableTempControl();
     }
 
-    render() {
+    return <form>
+        <FormGroup controlId="tempValue">
+            <FormLabel>Temperature value</FormLabel>
+            <FormControl type="number" value={temp} placeholder="Enter temperature" onChange={handleTempChange}/>
+        </FormGroup>
 
-        return <form>
-            <FormGroup controlId="tempValue">
-              <FormLabel>Temperature value</FormLabel>
-              <FormControl type="number" value={this.state.temp} placeholder="Enter temperature" onChange={this.handleTempChange}/>
-            </FormGroup>
-
-            <ButtonToolbar>
-                <Button variant="success" onClick={this.handleSetTemp}>Set</Button>
-                <Button variant="danger" onClick={this.handleDisableTemp}>Disable</Button>
-            </ButtonToolbar>
-
-        </form>
-    }
+        <ButtonToolbar>
+            <Button variant="success" onClick={handleSetTemp}>Set</Button>
+            <Button variant="danger" onClick={handleDisableTemp}>Disable</Button>
+        </ButtonToolbar>
+    </form>
 }
 
 export default TempControl;

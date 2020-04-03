@@ -9,9 +9,9 @@ const logger = createSimpleLogger();
 export default function create() {
     logger.info(`Backend url is ${backendUrl}`);
 
-    function toggleHeater(heaterNo, state) {
-        logger.info(`setting heater state ${heaterNo} to ${state}`);
-        return axios.post(`${backendUrl}heaters/${heaterNo}`, { 'state': state })
+    function setHeaterPower(power) {
+        logger.info(`setting heater to power ${power}`);
+        return axios.post(`${backendUrl}heaters`, { power })
             .then(resp => {
                 if (resp.status !== 200) {
                     return logger.error(`Invalid response from backend. ${resp.status}: ${resp.data}`);
@@ -22,11 +22,11 @@ export default function create() {
             .catch(logger.error);
     }
 
-    function getHeaterState(heaterNo) {
-        return axios.get(`${backendUrl}heaters/${heaterNo}`)
+    function getHeaterPower() {
+        return axios.get(`${backendUrl}heaters`)
             .then(resp => {
                 if (resp.status === 200) {
-                    return resp.data.state;
+                    return resp.data.power;
                 }
             })
             .catch(logger.error);
@@ -37,14 +37,12 @@ export default function create() {
             .post(`${backendUrl}temperatures/control`, { value: temp})
             .then( resp => {
                 if (resp.status !== 200) {
-                    return logger.error(`Wrong status code response for set temp ${resp.statusCode}`)
+                    return logger.error(`Wrong status code response for set temp ${resp.statusCode}`);
                 }
 
-                return logger.info("temp was set successfully: " + temp)
+                return logger.info("temp was set successfully: " + temp);
             })
-            .catch(e => {
-                logger.error(`Error while setting temperature to control. ${e}`);
-            })
+            .catch(e => logger.error(`Error while setting temperature to control. ${e}`))
     }
 
     function disableTempControl() {
@@ -57,14 +55,12 @@ export default function create() {
 
                 return logger.info('temp was deleted successfully');
             })
-            .catch(e => {
-                logger.error(`Error while deleting temperature to control. ${e}` );
-            })
+            .catch(e => logger.error(`Error while deleting temperature to control. ${e}` ))
     }
 
     return {
-        toggleHeater,
-        getHeaterState,
+        setHeaterPower,
+        getHeaterPower,
         setTemp,
         disableTempControl
     }

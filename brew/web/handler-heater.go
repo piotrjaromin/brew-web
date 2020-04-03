@@ -1,7 +1,6 @@
 package web
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/piotrjaromin/brew-web/brew/keg"
@@ -25,8 +24,8 @@ func InitHeater(e *echo.Echo, kegControl keg.KegControl) {
 		return c.JSON(http.StatusOK, power)
 	}
 
-	e.GET(fmt.Sprintf("/heaters"), get)
-	e.POST(fmt.Sprintf("/heaters"), post)
+	e.GET("/heaters", get)
+	e.POST("/heaters", post)
 }
 
 type HeaterPower struct {
