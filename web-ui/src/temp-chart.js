@@ -27,7 +27,6 @@ class TempChart extends React.Component {
 
     refresh() {
         axios.get(`${backendUrl}temperatures`).then(resp => {
-            console.log('refresh _ 2');
             if (resp.status === 200) {
                 const temperatures = resp.data.map(point => ({
                     value: point.value,

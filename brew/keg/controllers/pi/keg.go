@@ -35,7 +35,7 @@ func (k *kegStruct) Temperature() (float64, error) {
 func (k *kegStruct) SetHeaterPower(power float64) {
 	val := int(math.Round(power * float64(k.heaterAmount)))
 
-	for heaterIndex := 0; heaterIndex <= val; heaterIndex++ {
+	for heaterIndex := 0; heaterIndex < val; heaterIndex++ {
 		k.heaters[heaterIndex].High()
 	}
 }

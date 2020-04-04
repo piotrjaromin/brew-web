@@ -1,40 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-import { Row, Col } from 'react-bootstrap';
+import { Row, Col, DropdownButton, Dropdown } from 'react-bootstrap';
 import createKegClient from './services/kegClient';
 import { createSimpleLogger } from 'simple-node-logger';
-
-import Slider from 'react-rangeslider'
-
-import 'react-rangeslider/lib/index.css'
 
 const kegClient = createKegClient();
 const logger = createSimpleLogger();
 
 const HeaterControl = () => {
+    const powerLevels = [0, 50, 100];
+
     const [heaterPower, setHeaterPowerValue] = useState(0);
 
-    kegClient.getHeaterPower()
-        .then(setHeaterPower);
-
+    useEffect(() => {
+        kegClient.getHeaterPower().then(setHeaterPowerValue)
+    }, []);
 
     function setHeaterPower(value) {
-        logger.info(`clicked heat, setting value to: ${value}`);
-        kegClient.setHeaterPower(value)
-        setHeaterPowerValue(value);
+        return () => {
+            logger.info(`clicked heat, setting value to: ${value}`);
+            kegClient.setHeaterPower(value)
+            setHeaterPowerValue(value);
+        }
     }
 
     return <div>
         <Row>
             <Col md={12}>
                 <p>Heater power</p>
-                <Slider
-                    min={0}
-                    max={100}
-                    step={50}
-                    value={heaterPower}
-                    onChange={setHeaterPower}
-                />
+                <DropdownButton id="dropdown-item-button" title={`${heaterPower} %`}>
+                    {powerLevels.map(powerLevel =>
+                        <Dropdown.Item key={`power-${powerLevel}`} onSelect={setHeaterPower(powerLevel)} as="button">{powerLevel}%</Dropdown.Item>)
+                    }
+                </DropdownButton>
             </Col>
         </Row>
     </div>
