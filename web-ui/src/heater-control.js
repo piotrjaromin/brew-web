@@ -8,7 +8,7 @@ const kegClient = createKegClient();
 const logger = createSimpleLogger();
 
 const HeaterControl = () => {
-    const powerLevels = [0, 50, 100];
+    const powerLevels = [0, 0.5, 1.0];
 
     const [heaterPower, setHeaterPowerValue] = useState(0);
 
@@ -28,9 +28,9 @@ const HeaterControl = () => {
         <Row>
             <Col md={12}>
                 <p>Heater power</p>
-                <DropdownButton id="dropdown-item-button" title={`${heaterPower} %`}>
+                <DropdownButton id="dropdown-item-button" title={heaterPower}>
                     {powerLevels.map(powerLevel =>
-                        <Dropdown.Item key={`power-${powerLevel}`} onSelect={setHeaterPower(powerLevel)} as="button">{powerLevel}%</Dropdown.Item>)
+                        <Dropdown.Item key={`power-${powerLevel}`} onSelect={setHeaterPower(powerLevel)} as="button">{powerLevel}</Dropdown.Item>)
                     }
                 </DropdownButton>
             </Col>

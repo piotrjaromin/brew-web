@@ -34,6 +34,7 @@ func (k *kegStruct) Temperature() (float64, error) {
 
 func (k *kegStruct) SetHeaterPower(power float64) {
 	val := int(math.Round(power * float64(k.heaterAmount)))
+	log.Printf("[SetHeaterPower] val: %d", val)
 
 	for heaterIndex := 0; heaterIndex < val; heaterIndex++ {
 		k.heaters[heaterIndex].High()
@@ -49,6 +50,7 @@ func NewKeg(tempDev W1Device, c config.Keg) (*kegStruct, error) {
 
 	heaters := []rpio.Pin{}
 	for pinConfig := range c.Heaters {
+		log.Printf("Creating heater for %+v\n", pinConfig)
 		pin := rpio.Pin(pinConfig)
 		pin.Output()
 		heaters = append(heaters, pin)
