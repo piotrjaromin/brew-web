@@ -35,7 +35,7 @@ func main() {
 		log.Panic("Error while reading config. Details: ", err)
 	}
 
-	fmt.Printf("%+v", *conf)
+	fmt.Printf("Config is:\n%+v\n", *conf)
 
 	kegControl, err := keg.CreateKegControl(*controllerTypePtr, conf.Keg)
 	if err != nil {
@@ -66,6 +66,10 @@ func main() {
 	web.InitTemp(e, tempStore)
 	web.InitTempControl(e, tempControl)
 	web.InitRecipes(e, cook)
+	web.InitVersion(e, web.VersionResponse{
+		Version: Version,
+		Commit:  Commit,
+	})
 
 	fileServer := http.FileServer(statikFS)
 	e.GET("/*", func(c echo.Context) error {
@@ -75,5 +79,6 @@ func main() {
 
 	log.Printf("Version: %s, commit: %s", Version, Commit)
 	log.Printf("Listening... %d\n", conf.Port)
+	e.HideBanner = true
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", conf.Port)))
 }

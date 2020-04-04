@@ -53,7 +53,7 @@ func (t *TemperatureDB) Add(s float64) error {
 	return t.db.Update(func(tx *buntdb.Tx) error {
 		_, _, err := tx.Set(point.TimeStamp.String(), string(strPoint), &buntdb.SetOptions{
 			Expires: true,
-			TTL:     time.Hour * 24,
+			TTL:     time.Hour * 3,
 		})
 		return err
 	})
