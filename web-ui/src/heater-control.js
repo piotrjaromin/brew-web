@@ -11,16 +11,8 @@ import 'react-rangeslider/lib/index.css'
 const kegClient = createKegClient();
 const logger = createSimpleLogger();
 
-const HEATER_REFRESH_INTERVAL = 5000;
-
 const HeaterControl = () => {
     const [heaterPower, setHeaterPowerValue] = useState(0);
-
-    setInterval(updateHeatersState, HEATER_REFRESH_INTERVAL);
-
-    function updateHeatersState() {
-        kegClient.getHeaterPower().then(setHeaterPowerValue)
-    }
 
     function setHeaterPower(value) {
         logger.info(`clicked heat, setting value to: ${value}`);

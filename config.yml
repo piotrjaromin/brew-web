@@ -8,4 +8,4 @@ keg:
   # - pin: 24 # BCM 24
 
 temperature:
-  refreshIntervalSeconds: 5
+  refreshIntervalSeconds: 20
