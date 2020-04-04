@@ -3,7 +3,7 @@ import React from 'react';
 import { Row, Col } from 'react-bootstrap';
 
 import HeaterControl from './heater-control';
-import TempControl from './tempControl';
+import TempControl from './temp-control';
 import TempChart from './temp-chart';
 
 const Info = () => {
