@@ -14,6 +14,10 @@ const logger = createSimpleLogger();
 const HeaterControl = () => {
     const [heaterPower, setHeaterPowerValue] = useState(0);
 
+    kegClient.getHeaterPower()
+        .then(setHeaterPower);
+
+
     function setHeaterPower(value) {
         logger.info(`clicked heat, setting value to: ${value}`);
         kegClient.setHeaterPower(value)
