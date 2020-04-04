@@ -26,7 +26,7 @@ func InitHeater(e *echo.Echo, kegControl keg.KegControl) {
 		}
 
 		powerVal := power.Power
-		if powerVal > 0 || powerVal > 1 {
+		if powerVal < 0 || powerVal > 1 {
 			return c.JSON(http.StatusBadRequest, BadRequest{
 				Message: fmt.Sprintf("Power must be between 0 and 1, got %f", powerVal),
 			})
