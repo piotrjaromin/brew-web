@@ -36,8 +36,12 @@ func (k *kegStruct) SetHeaterPower(power float64) {
 	val := int(math.Round(power * float64(k.heaterAmount)))
 	log.Printf("[SetHeaterPower] val: %d", val)
 
-	for heaterIndex := 0; heaterIndex < val; heaterIndex++ {
-		k.heaters[heaterIndex].High()
+	for heaterIndex := 0; heaterIndex < len(k.heaters); heaterIndex++ {
+		if val <= heaterIndex {
+			k.heaters[heaterIndex].Low()
+		} else {
+			k.heaters[heaterIndex].High()
+		}
 	}
 }
 
