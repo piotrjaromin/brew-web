@@ -5,7 +5,7 @@
   vars:
     workDir: /root
     user: root
-    version: 0.4.15
+    version: 0.4.16
 
   tasks:
   # - name: Install mdns
@@ -14,7 +14,7 @@
   #   shell: dtoverlay w1-gpio gpiopin=4
   - name: Download brew-web
     get_url:
-      url: "https://github.com/piotrjaromin/brew-web/releases/download/{{ version }}/brew-web_{{ version }}_Linux_armv6.tar.gz"
+      url: "https://github.com/piotrjaromin/brew-web/releases/download/{{ version }}/brew-web_{{ version }}_Linux_armv5.tar.gz"
       dest: "{{ workDir }}/brew-web.tar.gz"
       mode: '0777'
   - name: Extract
