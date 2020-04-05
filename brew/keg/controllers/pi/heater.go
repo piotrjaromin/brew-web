@@ -4,6 +4,8 @@ import (
 	"log"
 
 	"github.com/piotrjaromin/brew-web/brew/config"
+
+	"github.com/brian-armstrong/gpio"
 )
 
 type HeaterState string
@@ -22,6 +24,12 @@ type rpioHeater struct {
 	pin pin
 }
 
+type pin interface {
+	Read() (value uint, err error)
+	High() error
+	Low() error
+}
+
 func (h rpioHeater) SetState(state HeaterState) {
 	if state == HEATER_ENABLED {
 		h.pin.High()
@@ -37,7 +45,7 @@ func (h rpioHeater) State() HeaterState {
 		panic(err) // terrible idea!
 	}
 
-	if state {
+	if state == 1 {
 		return HEATER_ENABLED
 	}
 
@@ -48,10 +56,7 @@ func GetHeaters(c config.Keg) ([]Heater, error) {
 	heaters := []Heater{}
 	for pinConfig := range c.Heaters {
 		log.Printf("Creating heater for %+v\n", pinConfig)
-		pin, err := newPin(pinConfig)
-		if err != nil {
-			return heaters, err
-		}
+		pin := gpio.NewOutput(uint(pinConfig), false)
 
 		heater := rpioHeater{
 			pin: pin,
