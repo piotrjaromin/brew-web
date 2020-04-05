@@ -38,6 +38,10 @@ func initPi(kegConfig config.Keg) (KegControl, error) {
 		log.Panic("Found wrong amount of 1-wire devices. Got: ", len(devices))
 	}
 
+	heaters, err := pi.GetHeaters(kegConfig)
+	if err != nil {
+		log.Panic("Unable to initialize heaters. Got: ", err)
+	}
 	log.Println("Starting rpio version")
-	return pi.NewKeg(devices[0], kegConfig)
+	return pi.NewKeg(devices[0], heaters)
 }

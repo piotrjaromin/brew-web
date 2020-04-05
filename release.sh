@@ -1,5 +1,7 @@
 #!/bin/bash
 
+make test
+
 npm ci --prefix web-ui
 npm run build --prefix web-ui
 

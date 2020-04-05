@@ -1,5 +1,12 @@
 
-start:
+install:
+	go mod tidy
+	go mod download
+
+
+test:
+	go test ./...
+run:
 	go run main.go -type=mock
 
 web:

@@ -3,28 +3,27 @@ package pi
 import (
 	"log"
 	"math"
-
-	"github.com/piotrjaromin/brew-web/brew/config"
-
-	rpio "github.com/stianeikeland/go-rpio"
 )
 
 type kegStruct struct {
-	heaters      []rpio.Pin
-	heaterAmount int
-	temp         W1Device
+	heaters []Heater
+	temp    W1Device
 }
 
 func (k *kegStruct) GetHeaterPower() float64 {
 	sum := 0.0
 
-	for _, heater := range k.heaters {
-		if heater.Read() == rpio.High {
-			sum = +1
+	for index, heater := range k.heaters {
+		log.Printf("Heater state %d is %s \n", index, heater.State())
+		if heater.State() == HEATER_ENABLED {
+			sum++
 		}
 	}
 
-	return sum / float64(k.heaterAmount)
+	lenHeaters := len(k.heaters)
+
+	log.Printf("sum is %f is %d \n", sum, lenHeaters)
+	return sum / float64(lenHeaters)
 }
 
 func (k *kegStruct) Temperature() (float64, error) {
@@ -33,38 +32,26 @@ func (k *kegStruct) Temperature() (float64, error) {
 }
 
 func (k *kegStruct) SetHeaterPower(power float64) {
-	val := int(math.Round(power * float64(k.heaterAmount)))
+	lenHeaters := len(k.heaters)
+	val := int(math.Round(power * float64(lenHeaters)))
 	log.Printf("[SetHeaterPower] val: %d", val)
 
-	for heaterIndex := 0; heaterIndex < len(k.heaters); heaterIndex++ {
+	for heaterIndex := 0; heaterIndex < lenHeaters; heaterIndex++ {
 		if val <= heaterIndex {
-			k.heaters[heaterIndex].Low()
+			log.Printf("Disabling heater %d\n", heaterIndex)
+			k.heaters[heaterIndex].SetState(HEATER_DISABLED)
 		} else {
-			k.heaters[heaterIndex].High()
+			log.Printf("Enabling heater %d\n", heaterIndex)
+			k.heaters[heaterIndex].SetState(HEATER_ENABLED)
 		}
 	}
 }
 
-func NewKeg(tempDev W1Device, c config.Keg) (*kegStruct, error) {
-	err := rpio.Open()
-	if err != nil {
-		log.Printf("could not open rpio. Details %+v\n", err)
-		return nil, err
-	}
-
-	heaters := []rpio.Pin{}
-	for pinConfig := range c.Heaters {
-		log.Printf("Creating heater for %+v\n", pinConfig)
-		pin := rpio.Pin(pinConfig)
-		pin.Output()
-		heaters = append(heaters, pin)
-	}
+func NewKeg(tempDev W1Device, heaters []Heater) (*kegStruct, error) {
 
 	temp := tempDev
-
 	return &kegStruct{
-		heaters:      heaters,
-		temp:         temp,
-		heaterAmount: len(heaters),
+		heaters: heaters,
+		temp:    temp,
 	}, nil
 }

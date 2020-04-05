@@ -5,27 +5,22 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-
-	"github.com/piotrjaromin/brew-web/brew/keg"
 )
 
 type mockKeg struct {
 	mock.Mock
-	state keg.HeaterState
+	power float64
 	temp  float64
 }
 
-func (m mockKeg) ToggleHeater(h keg.Heater) {
-	m.Called(h)
+func (m mockKeg) SetHeaterPower(f float64) {
+	m.power = f
+	m.Called(f)
 }
 
-func (m mockKeg) SetHeaterState(h keg.Heater, enabled keg.HeaterState) {
-	m.Called(h, enabled)
-}
-
-func (m mockKeg) HeaterState(h keg.Heater) keg.HeaterState {
-	m.Called(h)
-	return m.state
+func (m mockKeg) GetHeaterPower() float64 {
+	m.Called()
+	return m.power
 }
 
 func (m mockKeg) Temperature() (float64, error) {
@@ -38,7 +33,7 @@ func TestTemperatureControl(t *testing.T) {
 	initTemp := 20.0
 	keg := &mockKeg{
 		temp:  initTemp,
-		state: keg.OFF,
+		power: 0.0,
 	}
 
 	keg.On("Temperature").Return(initTemp)
@@ -49,16 +44,14 @@ func TestTemperatureControl(t *testing.T) {
 	keg.AssertNotCalled(t, "SetHeaterState")
 
 	// // Call heaters keg.ON when temp is higher than delta
-	keg.On("SetHeaterState", keg.FIRST, keg.ON).Return()
-	keg.On("SetHeaterState", keg.SECOND, keg.ON).Return()
+	keg.On("SetHeaterPower", 1.0).Return()
 
 	tmpHigherThanDelta := initTemp + delta + 1
 	updateHeaters(keg, tmpHigherThanDelta, delta)
 	updateHeaters(keg, tmpHigherThanDelta, delta)
 
 	// // Call heaters keg.OFF when temp is lower than delta
-	keg.On("SetHeaterState", keg.FIRST, keg.OFF).Return()
-	keg.On("SetHeaterState", keg.SECOND, keg.OFF).Return()
+	keg.On("SetHeaterPower", 0.0).Return()
 
 	tmpLowerThanDelta := initTemp - delta - 1
 	updateHeaters(keg, tmpLowerThanDelta, delta)
@@ -71,7 +64,7 @@ func TestKeepTemp(t *testing.T) {
 	initTemp := 20.0
 	keg := &mockKeg{
 		temp:  initTemp,
-		state: keg.OFF,
+		power: 0.0,
 	}
 
 	tcs := NewTempControl(keg, initTemp)
