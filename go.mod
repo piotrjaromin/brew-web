@@ -5,7 +5,6 @@ require (
 	github.com/labstack/echo/v4 v4.1.10
 	github.com/mattn/go-colorable v0.1.4 // indirect
 	github.com/rakyll/statik v0.1.7
-	github.com/stianeikeland/go-rpio/v4 v4.4.0
 	github.com/stretchr/objx v0.2.0 // indirect
 	github.com/stretchr/testify v1.4.0
 	github.com/tidwall/btree v0.0.0-20170113224114-9876f1454cf0 // indirect

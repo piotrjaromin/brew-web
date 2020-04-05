@@ -4,7 +4,6 @@ import (
 	"log"
 
 	"github.com/piotrjaromin/brew-web/brew/config"
-	rpio "github.com/stianeikeland/go-rpio/v4"
 )
 
 type HeaterState string
@@ -20,7 +19,7 @@ type Heater interface {
 }
 
 type rpioHeater struct {
-	pin rpio.Pin
+	pin pin
 }
 
 func (h rpioHeater) SetState(state HeaterState) {
@@ -33,7 +32,12 @@ func (h rpioHeater) SetState(state HeaterState) {
 }
 
 func (h rpioHeater) State() HeaterState {
-	if h.pin.Read() == rpio.High {
+	state, err := h.pin.Read()
+	if err != nil {
+		panic(err) // terrible idea!
+	}
+
+	if state {
 		return HEATER_ENABLED
 	}
 
@@ -41,17 +45,13 @@ func (h rpioHeater) State() HeaterState {
 }
 
 func GetHeaters(c config.Keg) ([]Heater, error) {
-	err := rpio.Open()
-	if err != nil {
-		log.Printf("could not open rpio. Details %+v\n", err)
-		return []Heater{}, err
-	}
-
 	heaters := []Heater{}
 	for pinConfig := range c.Heaters {
 		log.Printf("Creating heater for %+v\n", pinConfig)
-		pin := rpio.Pin(pinConfig)
-		pin.Output()
+		pin, err := newPin(pinConfig)
+		if err != nil {
+			return heaters, err
+		}
 
 		heater := rpioHeater{
 			pin: pin,
