@@ -21,7 +21,8 @@ type Heater interface {
 }
 
 type rpioHeater struct {
-	pin pin
+	pin   pin
+	state HeaterState
 }
 
 type pin interface {
@@ -30,7 +31,8 @@ type pin interface {
 	Low() error
 }
 
-func (h rpioHeater) SetState(state HeaterState) {
+func (h *rpioHeater) SetState(state HeaterState) {
+	h.state = state
 	if state == HEATER_ENABLED {
 		h.pin.High()
 		return
@@ -40,16 +42,7 @@ func (h rpioHeater) SetState(state HeaterState) {
 }
 
 func (h rpioHeater) State() HeaterState {
-	state, err := h.pin.Read()
-	if err != nil {
-		panic(err) // terrible idea!
-	}
-
-	if state == 1 {
-		return HEATER_ENABLED
-	}
-
-	return HEATER_DISABLED
+	return h.state
 }
 
 func GetHeaters(c config.Keg) ([]Heater, error) {
@@ -58,8 +51,9 @@ func GetHeaters(c config.Keg) ([]Heater, error) {
 		log.Printf("Creating heater for %+v\n", pinConfig)
 		pin := gpio.NewOutput(uint(pinConfig), false)
 
-		heater := rpioHeater{
-			pin: pin,
+		heater := &rpioHeater{
+			pin:   pin,
+			state: HEATER_DISABLED,
 		}
 		heaters = append(heaters, heater)
 	}
