@@ -16,7 +16,7 @@ const (
 )
 
 type Heater interface {
-	SetState(state HeaterState)
+	SetState(state HeaterState) error
 	State() HeaterState
 }
 
@@ -31,14 +31,13 @@ type pin interface {
 	Low() error
 }
 
-func (h *rpioHeater) SetState(state HeaterState) {
+func (h *rpioHeater) SetState(state HeaterState) error {
 	h.state = state
 	if state == HEATER_ENABLED {
-		h.pin.High()
-		return
+		return h.pin.High()
 	}
 
-	h.pin.Low()
+	return h.pin.Low()
 }
 
 func (h rpioHeater) State() HeaterState {

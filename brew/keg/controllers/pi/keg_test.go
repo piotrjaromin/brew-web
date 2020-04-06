@@ -10,8 +10,9 @@ type mockHeater struct {
 	state HeaterState
 }
 
-func (h *mockHeater) SetState(state HeaterState) {
+func (h *mockHeater) SetState(state HeaterState) error {
 	h.state = state
+	return nil
 }
 
 func (h *mockHeater) State() HeaterState {

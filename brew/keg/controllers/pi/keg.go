@@ -37,12 +37,17 @@ func (k *kegStruct) SetHeaterPower(power float64) {
 	log.Printf("[SetHeaterPower] val: %d", val)
 
 	for heaterIndex := 0; heaterIndex < lenHeaters; heaterIndex++ {
+		state := HEATER_DISABLED
 		if val <= heaterIndex {
-			log.Printf("Disabling heater %d\n", heaterIndex)
-			k.heaters[heaterIndex].SetState(HEATER_DISABLED)
+			state = HEATER_DISABLED
 		} else {
-			log.Printf("Enabling heater %d\n", heaterIndex)
-			k.heaters[heaterIndex].SetState(HEATER_ENABLED)
+			state = HEATER_ENABLED
+		}
+
+		log.Printf("Setting heater %d to %s\n", heaterIndex, state)
+		err := k.heaters[heaterIndex].SetState(state)
+		if err != nil {
+			log.Printf("[Error] unable to set pin State: %+v\n", err)
 		}
 	}
 }
