@@ -51,7 +51,7 @@ func GetHeaters(c config.Keg) ([]Heater, error) {
 		pin := gpio.NewOutput(uint(pinConfig), false)
 
 		heater := &rpioHeater{
-			pin:   pin,
+			pin:   &pin,
 			state: HEATER_DISABLED,
 		}
 		heaters = append(heaters, heater)

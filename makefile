@@ -1,5 +1,6 @@
 
 install:
+	go get github.com/rakyll/statik
 	go mod tidy
 	go mod download
 
