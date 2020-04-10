@@ -24,6 +24,8 @@ github.com/piotrjaromin/gpio v0.0.0-20200410104754-49603904b337 h1:L2gFtsG4/fRVs
 github.com/piotrjaromin/gpio v0.0.0-20200410104754-49603904b337/go.mod h1:ayfXlm2bZVLcIuk523pTgbmzQS9BzPgpRERvDYet4c4=
 github.com/piotrjaromin/gpio v0.0.0-20200410105751-158a64a0e807 h1:mCoETyCNkC307hHadoH3heprLbDwW010TVkJb79utoQ=
 github.com/piotrjaromin/gpio v0.0.0-20200410105751-158a64a0e807/go.mod h1:ayfXlm2bZVLcIuk523pTgbmzQS9BzPgpRERvDYet4c4=
+github.com/piotrjaromin/gpio v0.0.0-20200410124320-f8a44e7ea6eb h1:+oOUrJq6W6FX4sv6Jau50dTK8qozKoSK8p4L1o2dxIw=
+github.com/piotrjaromin/gpio v0.0.0-20200410124320-f8a44e7ea6eb/go.mod h1:ayfXlm2bZVLcIuk523pTgbmzQS9BzPgpRERvDYet4c4=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/rakyll/statik v0.1.7 h1:OF3QCZUuyPxuGEP7B4ypUa7sB/iHtqOTDYZXGM8KOdQ=
