@@ -4,7 +4,7 @@ require (
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/labstack/echo/v4 v4.1.10
 	github.com/mattn/go-colorable v0.1.4 // indirect
-	github.com/piotrjaromin/gpio v0.0.0-20200410105751-158a64a0e807 // indirect
+	github.com/piotrjaromin/gpio v0.0.0-20200410124320-f8a44e7ea6eb
 	github.com/rakyll/statik v0.1.7
 	github.com/stretchr/objx v0.2.0 // indirect
 	github.com/stretchr/testify v1.4.0

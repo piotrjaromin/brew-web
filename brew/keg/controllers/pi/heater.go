@@ -46,15 +46,15 @@ func (h rpioHeater) State() HeaterState {
 
 func GetHeaters(c config.Keg) ([]Heater, error) {
 	heaters := []Heater{}
-	for pinConfig := range c.Heaters {
+	for _, pinConfig := range c.Heaters {
 		log.Printf("Creating heater for %+v\n", pinConfig)
-		pin, err := gpio.NewOutput(uint(pinConfig), false)
+		pin, err := gpio.NewOutput(pinConfig.Pin, false)
 		if err != nil {
 			log.Printf("Warning. %s", err.Error())
 		}
 
 		heater := &rpioHeater{
-			pin:   &pin,
+			pin:   pin,
 			state: HEATER_DISABLED,
 		}
 		heaters = append(heaters, heater)
