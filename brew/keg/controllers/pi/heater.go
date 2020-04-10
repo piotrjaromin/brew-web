@@ -50,7 +50,7 @@ func GetHeaters(c config.Keg) ([]Heater, error) {
 		log.Printf("Creating heater for %+v\n", pinConfig)
 		pin, err := gpio.NewOutput(uint(pinConfig), false)
 		if err != nil {
-			return heaters, err
+			log.Printf("Warning. %s", err.Error())
 		}
 
 		heater := &rpioHeater{
