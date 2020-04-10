@@ -1,10 +1,10 @@
 module github.com/piotrjaromin/brew-web
 
 require (
-	github.com/brian-armstrong/gpio v0.0.0-20181227042754-72b0058bbbcb
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/labstack/echo/v4 v4.1.10
 	github.com/mattn/go-colorable v0.1.4 // indirect
+	github.com/piotrjaromin/gpio v0.0.0-20200410105751-158a64a0e807 // indirect
 	github.com/rakyll/statik v0.1.7
 	github.com/stretchr/objx v0.2.0 // indirect
 	github.com/stretchr/testify v1.4.0

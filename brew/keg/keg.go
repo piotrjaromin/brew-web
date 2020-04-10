@@ -31,17 +31,18 @@ func CreateKegControl(controllerType string, kegConfig config.Keg) (KegControl, 
 func initPi(kegConfig config.Keg) (KegControl, error) {
 	devices, devErr := pi.GetDevices()
 	if devErr != nil {
-		log.Panic("Could not get list of devices. Details: ", devErr)
+		return nil, fmt.Errorf("Could not get list of devices. Details: %s", devErr.Error())
 	}
 
 	if len(devices) != 1 {
-		log.Panic("Found wrong amount of 1-wire devices. Got: ", len(devices))
+		return nil, fmt.Errorf("Found wrong amount of 1-wire devices. Got: %d", len(devices))
 	}
 
 	heaters, err := pi.GetHeaters(kegConfig)
 	if err != nil {
-		log.Panic("Unable to initialize heaters. Got: ", err)
+		return nil, fmt.Errorf("Unable to initialize heaters. Got: %s", err.Error())
 	}
+
 	log.Println("Starting rpio version")
 	return pi.NewKeg(devices[0], heaters)
 }

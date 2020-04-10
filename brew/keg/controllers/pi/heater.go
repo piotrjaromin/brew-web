@@ -5,7 +5,7 @@ import (
 
 	"github.com/piotrjaromin/brew-web/brew/config"
 
-	"github.com/brian-armstrong/gpio"
+	"github.com/piotrjaromin/gpio"
 )
 
 type HeaterState string
@@ -48,7 +48,10 @@ func GetHeaters(c config.Keg) ([]Heater, error) {
 	heaters := []Heater{}
 	for pinConfig := range c.Heaters {
 		log.Printf("Creating heater for %+v\n", pinConfig)
-		pin := gpio.NewOutput(uint(pinConfig), false)
+		pin, err := gpio.NewOutput(uint(pinConfig), false)
+		if err != nil {
+			return heaters, err
+		}
 
 		heater := &rpioHeater{
 			pin:   &pin,
