@@ -12,7 +12,7 @@ type Temperature struct {
 }
 
 type Heater struct {
-	Pin int `yaml:"pin"`
+	Pin uint `yaml:"pin"`
 }
 
 type Keg struct {

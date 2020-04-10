@@ -2,7 +2,6 @@ package pi
 
 import (
 	"log"
-	"time"
 
 	"github.com/piotrjaromin/brew-web/brew/config"
 
@@ -49,13 +48,10 @@ func GetHeaters(c config.Keg) ([]Heater, error) {
 	heaters := []Heater{}
 	for _, pinConfig := range c.Heaters {
 		log.Printf("Creating heater for %+v\n", pinConfig)
-		pin, err := gpio.NewOutput(uint(pinConfig.Pin), false)
+		pin, err := gpio.NewOutput(pinConfig.Pin, false)
 		if err != nil {
 			log.Printf("Warning. %s", err.Error())
 		}
-
-		time.Sleep(5 * time.Second)
-		pin.High()
 
 		heater := &rpioHeater{
 			pin:   pin,
