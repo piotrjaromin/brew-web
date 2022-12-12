@@ -25,6 +25,6 @@ jobs:
           IMAGE_TAG: "${{ github.sha }}"
         run: |
           docker buildx build \
-          --platform "linux/arm64,linux/arm/v8" \
+          --platform "linux/arm/v6" \
           --tag $REPOSITORY:${{ env.COMMIT_SHA }} \
           --output type=image,push=true .
