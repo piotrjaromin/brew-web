@@ -1,5 +1,5 @@
 name: "build"
-
+run-name: "Build tag: ${{ COMMIT_SHA=$(echo $GITHUB_SHA | cut -c 1-6) }}"
 on:
   workflow_dispatch:
     inputs: {}
