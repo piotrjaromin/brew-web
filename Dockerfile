@@ -25,8 +25,6 @@ FROM arm32v6/alpine:3.17 as final
 
 WORKDIR /home
 
-RUN apk add -U --no-cache curl
-
 COPY --from=gobuild /app/bin/brew-web .
 COPY --from=gobuild /app/config.yml .
 
