@@ -1,5 +1,5 @@
 name: "build"
-run-name: "Build ${{ GITHUB_SHA }}"
+run-name: "Build ${{ github.sha }}"
 on:
   workflow_dispatch:
     inputs: {}
