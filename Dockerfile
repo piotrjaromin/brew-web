@@ -28,4 +28,5 @@ WORKDIR /home
 COPY --from=gobuild /app/bin/brew-web .
 COPY --from=gobuild /app/config.yml .
 
-CMD [ "./brew-web" ]
+ENTRYPOINT [ "./brew-web" ]
+CMD ["-type=pi"]
