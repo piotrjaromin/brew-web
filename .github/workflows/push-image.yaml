@@ -31,6 +31,8 @@ jobs:
           REPOSITORY: "piotrjaromin/brew-web"
           IMAGE_TAG: "${{ github.sha }}"
         run: |
+          docker run --privileged --rm tonistiigi/binfmt --install all
+
           docker buildx build \
           --platform "${{ env.PLATFORMS }}" \
           --tag $REPOSITORY:${{ env.COMMIT_SHA }} \
