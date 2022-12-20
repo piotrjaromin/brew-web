@@ -1,4 +1,4 @@
-FROM arm32v6/node:16-alpine AS nodebuild
+FROM node:16-alpine AS nodebuild
 
 WORKDIR /app
 ADD . .
@@ -7,7 +7,7 @@ RUN npm --prefix web-ui i && \
     npm --prefix web-ui run build
 
 
-FROM arm32v6/golang:1.18.8-alpine3.17 AS gobuild
+FROM golang:1.18.8-alpine3.17 AS gobuild
 
 WORKDIR /app
 ADD . .
@@ -21,7 +21,7 @@ COPY --from=nodebuild /app/web-ui/build ./web-ui/build
 RUN make install && \
     make build
 
-FROM arm32v6/alpine:3.17 as final
+FROM alpine:3.17 as final
 
 WORKDIR /home
 
