@@ -1,7 +1,7 @@
 
 install:
 	go install github.com/rakyll/statik@v0.1.7
-	statik -src ./web-ui/build
+	statik -f -src ./web-ui/build
 	go mod tidy
 	go mod download
 
